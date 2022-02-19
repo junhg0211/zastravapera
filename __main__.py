@@ -14,7 +14,7 @@ database = Database()
 @slash.slash(
     name='zasok',
     description='자소크어 단어를 검색합니다.',
-    guild_ids=[561880172542820353],
+    guild_ids=get_const('guild_ids'),
     options=[
         create_option(
             name='query',
@@ -51,7 +51,7 @@ async def zasok(ctx: SlashContext, query: str):
 @slash.slash(
     name='reload',
     description='데이터베이스를 다시 불러옵니다.',
-    guild_ids=[561880172542820353]
+    guild_ids=get_const('guild_ids')
 )
 async def reload(ctx: SlashContext):
     database.reload()
