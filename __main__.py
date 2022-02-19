@@ -36,7 +36,7 @@ async def zasok(ctx: SlashContext, query: str):
         return
 
     tmp = 0
-    while duplicates:
+    while duplicates and words:
         word = words.pop(duplicates.pop() - tmp)
         word.add_to_field(embed, True)
         tmp += 1

@@ -6,6 +6,7 @@ from typing import Tuple
 import gspread
 from discord import Embed
 
+from const import get_const
 from util import normalise
 
 
@@ -47,6 +48,8 @@ class Word:
             definitions.append(f'관: {self.prep}')
         if self.conj:
             definitions.append(f'접: {self.conj}')
+        if self.remark:
+            definitions.append(f'비고: {self.remark}')
         return '\n'.join(definitions)
 
 
@@ -58,7 +61,7 @@ class Database:
 
     def __init__(self):
         self.credential = gspread.service_account(filename='res/google_credentials.json')
-        self.sheet = self.credential.open_by_key('1QSqIbmShJiUiJWNB0x8dQzGbb6W1dqEz_LBlP363e_E').sheet1
+        self.sheet = self.credential.open_by_key(get_const('zasokese_database')).sheet1
 
         self.last_reload = datetime.now()
         self.sheet_values = None
@@ -77,7 +80,7 @@ class Database:
         duplicates = set()
         rows = list()
         for j, row in enumerate(self.sheet_values):
-            for i, column in enumerate(row):
+            for i, column in enumerate(row[:-2]):
                 if normalise(query) in normalise(column):
                     rows.append(Word(*row))
                     break
