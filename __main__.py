@@ -16,6 +16,8 @@ databases = {
 
 
 async def handle_dictionary(ctx: SlashContext, database: Database, embed: Embed, query: str):
+    message = await ctx.send(f'`{query}`에 대해 검색 중입니다…')
+
     words, duplicates, reloaded = database.search_rows(query)
     if len(words) > 25:
         await ctx.send(content='검색 결과가 너무 많습니다. 좀 더 자세히 검색해주세요.')
@@ -31,7 +33,7 @@ async def handle_dictionary(ctx: SlashContext, database: Database, embed: Embed,
     if not words and not tmp:
         embed.add_field(name='검색 결과', value='검색 결과가 없습니다.')
 
-    await ctx.send(content='데이터베이스를 다시 불러왔습니다.' if reloaded else '', embed=embed)
+    await message.edit(content='데이터베이스를 다시 불러왔습니다.' if reloaded else '', embed=embed)
 
 
 @slash.slash(
@@ -103,9 +105,10 @@ async def berquam(ctx: SlashContext, query: str):
     guild_ids=get_const('guild_ids')
 )
 async def reload(ctx: SlashContext):
+    message = await ctx.send('데이터베이스를 다시 불러옵니다…')
     for database in databases.values():
         database.reload()
-    await ctx.send('데이터베이스를 다시 불러왔습니다.')
+    await message.edit(content='데이터베이스를 다시 불러왔습니다.')
 
 
 bot.run(get_secret('bot_token'))
