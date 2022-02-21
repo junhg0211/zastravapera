@@ -114,7 +114,7 @@ class Database:
 
     def search_rows(self, query: str) -> Tuple[list, set, bool]:
         reloaded = False
-        if self.last_reload + timedelta(hours=1) < datetime.now():
+        if self.last_reload + timedelta(weeks=1) < datetime.now():
             self.reload()
             reloaded = True
         duplicates = set()
