@@ -1,7 +1,6 @@
 import re
 from datetime import datetime, timedelta
-from pprint import pprint
-from typing import Tuple
+from typing import Tuple, Type
 
 import gspread
 from discord import Embed
@@ -11,9 +10,20 @@ from util import normalise
 
 
 class Word:
-    def __init__(self,
-                 word: str, noun: str = '', adj: str = '', verb: str = '', adv: str = '', prep: str = '',
+    def __init__(self):
+        pass
+
+    def add_to_field(self, embed: Embed, special: bool = False) -> Embed:
+        pass
+
+    def get_field_value(self) -> str:
+        pass
+
+
+class ZasokeseWord(Word):
+    def __init__(self, word: str, noun: str = '', adj: str = '', verb: str = '', adv: str = '', prep: str = '',
                  conj: str = '', remark: str = '', derived_from_language: str = '', derived_from_word: str = ''):
+        super().__init__()
         self.word = word
         self.noun = noun
         self.adj = adj
@@ -53,10 +63,10 @@ class Word:
         return '\n'.join(definitions)
 
 
-class ThravelemehWord:
-    def __init__(self,
-                 word: str, noun: str = '', verb: str = '', adj: str = '', adv: str = '', conj: str = '',
+class ThravelemehWord(Word):
+    def __init__(self, word: str, noun: str = '', verb: str = '', adj: str = '', adv: str = '', conj: str = '',
                  remark: str = '', cont: str = '', origin: str = ''):
+        super().__init__()
         self.word = word
         self.noun = noun
         self.verb = verb
@@ -99,9 +109,11 @@ class Database:
         return normalise(query) == normalise(row[0]) \
                    or any(normalise(query) in re.split(r'[,;] ', normalise(row[i])) for i in range(1, len(row)))
 
-    def __init__(self):
+    def __init__(self, word_class: Type[Word], spreadsheet_key: str, sheet_number: int = 0):
+        self.word_class = word_class
+
         self.credential = gspread.service_account(filename='res/google_credentials.json')
-        self.sheet = self.credential.open_by_key(get_const('zasokese_database')).sheet1
+        self.sheet = self.credential.open_by_key(get_const(spreadsheet_key)).get_worksheet(sheet_number)
 
         self.last_reload = datetime.now()
         self.sheet_values = None
@@ -122,49 +134,9 @@ class Database:
         for j, row in enumerate(self.sheet_values):
             for i, column in enumerate(row[:-2]):
                 if normalise(query) in normalise(column):
-                    rows.append(Word(*row))
+                    # noinspection PyArgumentList
+                    rows.append(self.word_class(*row))
                     break
             if self.is_duplicate(query, row):
                 duplicates.add(len(rows) - 1)
         return rows, duplicates, reloaded
-
-
-class ThravelemehDatabase:
-    @staticmethod
-    def is_duplicate(query: str, row: list) -> bool:
-        return normalise(query) == normalise(row[0]) \
-                   or any(normalise(query) in re.split(r'[,;] ', normalise(row[i])) for i in range(1, len(row)))
-
-    def __init__(self):
-        self.credential = gspread.service_account(filename='res/google_credentials.json')
-        self.sheet = self.credential.open_by_key(get_const('thravelemeh_database')).sheet1
-
-        self.last_reload = datetime.now()
-        self.sheet_values = None
-        self.reload()
-
-    def reload(self):
-        self.sheet_values = self.sheet.get_all_values()
-        self.last_reload = datetime.now()
-        return self
-
-    def search_rows(self, query: str) -> Tuple[list, set, bool]:
-        reloaded = False
-        if self.last_reload + timedelta(hours=1) < datetime.now():
-            self.reload()
-            reloaded = True
-        duplicates = set()
-        rows = list()
-        for j, row in enumerate(self.sheet_values):
-            for i, column in enumerate(row[:-2]):
-                if normalise(query) in normalise(column):
-                    rows.append(ThravelemehWord(*row))
-                    break
-            if self.is_duplicate(query, row):
-                duplicates.add(len(rows) - 1)
-        return rows, duplicates, reloaded
-
-
-if __name__ == '__main__':
-    database = ThravelemehDatabase()
-    pprint(database.search_rows('daaf'))
