@@ -4,13 +4,14 @@ from discord_slash import SlashCommand, SlashContext
 from discord_slash.utils.manage_commands import create_option
 
 from const import get_secret, get_const
-from database import Database, ThravelemehWord, ZasokeseWord
+from database import Database, ThravelemehWord, ZasokeseWord, BerquamWord
 
 bot = Bot(command_prefix='$$')
 slash = SlashCommand(bot, sync_commands=True)
 databases = {
     'zasokese': Database(ZasokeseWord, 'zasokese_database'),
-    'thravelemeh': Database(ThravelemehWord, 'thravelemeh_database')
+    'thravelemeh': Database(ThravelemehWord, 'thravelemeh_database'),
+    'berquam': Database(BerquamWord, 'zasokese_database', 1)
 }
 
 
@@ -72,6 +73,27 @@ async def th(ctx: SlashContext, query: str):
         title=f'`{query}`의 검색 결과',
         description='트라벨레메 단어를 검색합니다.',
         color=get_const('hemelvaarht_hx_nerhgh')
+    ), query)
+
+
+@slash.slash(
+    name='berquam',
+    description='베르쿠암 단어를 검색합니다.',
+    guild_ids=get_const('guild_ids'),
+    options=[
+        create_option(
+            name='query',
+            description='검색할 단어',
+            required=True,
+            option_type=3
+        )
+    ]
+)
+async def berquam(ctx: SlashContext, query: str):
+    await handle_dictionary(ctx, databases['berquam'], Embed(
+        title=f'`{query}`의 검색 결과',
+        description='베르쿠암 단어를 검색합니다.',
+        color=get_const('berquam_color')
     ), query)
 
 
