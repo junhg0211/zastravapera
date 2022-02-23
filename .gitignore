@@ -153,3 +153,4 @@ cython_debug/
 
 res/secret.json
 res/google_credentials.json
+.DS_Store
