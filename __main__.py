@@ -22,7 +22,7 @@ async def handle_dictionary(ctx: SlashContext, database: Database, embed: Embed,
 
     words, duplicates, reloaded = database.search_rows(query)
     if len(words) > 25:
-        await ctx.send(content='검색 결과가 너무 많습니다. 좀 더 자세히 검색해주세요.')
+        await message.edit(content='검색 결과가 너무 많습니다. 좀 더 자세히 검색해주세요.')
         return
 
     tmp = 0
