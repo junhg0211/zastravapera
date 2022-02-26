@@ -166,7 +166,7 @@ async def word(ctx: SlashContext, consonants: str, vowels: str, syllables: str, 
 
     embed = Embed(
         title='랜덤 생성 단어',
-        description=syllables,
+        description=', '.join(syllables),
         color=get_const('shtelo_sch_vanilla')
     )
     embed.add_field(name='단어 목록', value='\n'.join(words))
