@@ -131,7 +131,7 @@ async def reload(ctx: SlashContext):
         ),
         create_option(
             name='syllables',
-            description='자음은 c, 모음은 v로 입력합니다. (대소문자 구분하지 않음)',
+            description='자음은 c, 모음은 v로 입력합니다. (대소문자 구분하지 않음, 콤마로 구분합니다.)',
             required=True,
             option_type=3
         ),
@@ -146,9 +146,11 @@ async def reload(ctx: SlashContext):
 async def word(ctx: SlashContext, consonants: str, vowels: str, syllables: str, count: int = 10):
     syllables = syllables.lower()
 
-    if syllables.replace('c', '').replace('v', ''):
+    if syllables.replace('c', '').replace('v', '').replace(',', ''):
         await ctx.send('`syllables` 인자에는 `v`와 `c`만을 입력해주세요.')
         return
+
+    syllables = syllables.split(',')
 
     message = await ctx.send('단어 생성중입니다...')
 
@@ -158,8 +160,9 @@ async def word(ctx: SlashContext, consonants: str, vowels: str, syllables: str, 
     words = list()
     for i in range(count):
         words.append(f'{i+1}. ')
-        for syllable in syllables:
-            words[-1] += random.choice(consonants) if syllable == 'c' else random.choice(vowels)
+        syllable = random.choice(syllables)
+        for character in syllable:
+            words[-1] += random.choice(consonants) if character == 'c' else random.choice(vowels)
 
     embed = Embed(
         title='랜덤 생성 단어',
