@@ -16,6 +16,8 @@ databases = {
     'berquam': Database(BerquamWord, 'zasokese_database', 1)
 }
 
+guild_ids = list()
+
 
 async def handle_dictionary(ctx: SlashContext, database: Database, embed: Embed, query: str):
     message = await ctx.send(f'`{query}`에 대해 검색 중입니다…')
@@ -38,10 +40,24 @@ async def handle_dictionary(ctx: SlashContext, database: Database, embed: Embed,
     await message.edit(content='데이터베이스를 다시 불러왔습니다.' if reloaded else '', embed=embed)
 
 
+@bot.event
+async def on_ready():
+    global guild_ids
+
+    guild_ids.clear()
+    for guild_id in get_const('guild_ids'):
+        guild = bot.get_guild(guild_id)
+        if guild is not None:
+            guild_ids.append(guild_id)
+            print(f'Bot loaded on guild {guild.name}')
+
+    print(f'Bot loaded. Bot is in {len(guild_ids)} guilds.')
+
+
 @slash.slash(
     name='zasok',
     description='자소크어 단어를 검색합니다.',
-    guild_ids=get_const('guild_ids'),
+    guild_ids=guild_ids,
     options=[
         create_option(
             name='query',
@@ -62,7 +78,7 @@ async def zasok(ctx: SlashContext, query: str):
 @slash.slash(
     name='th',
     description='트라벨레메 단어를 검색합니다.',
-    guild_ids=get_const('guild_ids'),
+    guild_ids=guild_ids,
     options=[
         create_option(
             name='query',
@@ -83,7 +99,7 @@ async def th(ctx: SlashContext, query: str):
 @slash.slash(
     name='berquam',
     description='베르쿠암 단어를 검색합니다.',
-    guild_ids=get_const('guild_ids'),
+    guild_ids=guild_ids,
     options=[
         create_option(
             name='query',
@@ -104,7 +120,7 @@ async def berquam(ctx: SlashContext, query: str):
 @slash.slash(
     name='reload',
     description='데이터베이스를 다시 불러옵니다.',
-    guild_ids=get_const('guild_ids')
+    guild_ids=guild_ids
 )
 async def reload(ctx: SlashContext):
     message = await ctx.send('데이터베이스를 다시 불러옵니다…')
@@ -174,4 +190,5 @@ async def word(ctx: SlashContext, consonants: str, vowels: str, syllables: str, 
     await message.edit(embed=embed)
 
 
-bot.run(get_secret('bot_token'))
+if __name__ == '__main__':
+    bot.run(get_secret('bot_token'))
