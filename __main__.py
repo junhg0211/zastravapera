@@ -1,4 +1,5 @@
 import random
+from datetime import datetime
 
 from discord import Embed
 from discord.ext.commands import Bot
@@ -52,6 +53,12 @@ async def on_ready():
             print(f'Bot loaded on guild {guild.name}')
 
     print(f'Bot loaded. Bot is in {len(guild_ids)} guilds.')
+
+
+@bot.event
+async def on_command(ctx):
+    now = datetime.now()
+    print(f'{now} {ctx.guild.name} {ctx.author.name}#{ctx.author.discriminator}: {ctx.command.name}')
 
 
 @slash.slash(
