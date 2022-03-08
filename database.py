@@ -72,7 +72,7 @@ class ThravelemehWord(Word):
     back_slice = 2
 
     def __init__(self, word: str, noun: str = '', verb: str = '', adj: str = '', adv: str = '', conj: str = '',
-                 remark: str = '', cont: str = '', origin: str = ''):
+                 remark: str = '', cont: str = '', origin_language: str = '', origin: str = ''):
         super().__init__()
         self.word = word
         self.noun = noun
@@ -82,6 +82,7 @@ class ThravelemehWord(Word):
         self.conj = conj
         self.remark = remark
         self.cont = cont
+        self.origin_language = origin_language
         self.origin = origin
 
     def add_to_field(self, embed: Embed, special: bool = False) -> Embed:
