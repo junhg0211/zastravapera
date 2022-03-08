@@ -7,15 +7,15 @@ from discord_slash import SlashCommand, SlashContext
 from discord_slash.utils.manage_commands import create_option
 
 from const import get_secret, get_const
-from database import Database, ThravelemehWord, ZasokeseWord, BerquamWord
+from database import Database, DialectDatabase, ThravelemehWord, ZasokeseWord, BerquamWord
+from util import zasokese_to_simetasise
 
 bot = Bot(command_prefix='$$')
 slash = SlashCommand(bot, sync_commands=True)
-databases = {
-    'zasokese': Database(ZasokeseWord, 'zasokese_database'),
-    'thravelemeh': Database(ThravelemehWord, 'thravelemeh_database'),
-    'berquam': Database(BerquamWord, 'zasokese_database', 1)
-}
+databases = {'zasokese': Database(ZasokeseWord, 'zasokese_database'),
+             'thravelemeh': Database(ThravelemehWord, 'thravelemeh_database'),
+             'berquam': Database(BerquamWord, 'zasokese_database', 1),
+             'simetasispika': DialectDatabase(ZasokeseWord, 'zasokese_database', zasokese_to_simetasise)}
 
 guild_ids = list()
 
@@ -121,6 +121,27 @@ async def berquam(ctx: SlashContext, query: str):
         title=f'`{query}`의 검색 결과',
         description='베르쿠암 단어를 검색합니다.',
         color=get_const('berquam_color')
+    ), query)
+
+
+@slash.slash(
+    name='sts',
+    description='시메타시스 단어를 검색합니다.',
+    guild_ids=guild_ids,
+    options=[
+        create_option(
+            name='query',
+            description='검색할 단어',
+            required=True,
+            option_type=3
+        )
+    ]
+)
+async def sts(ctx: SlashContext, query: str):
+    await handle_dictionary(ctx, databases['simetasispika'], Embed(
+        title=f'`{query}`의 검색 결과',
+        description='시메타시스어 단어를 검색합니다.',
+        color=get_const('simetasis_color')
     ), query)
 
 

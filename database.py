@@ -1,6 +1,6 @@
 import re
 from datetime import datetime, timedelta
-from typing import Tuple, Type, List
+from typing import Tuple, Type, List, Callable
 
 import gspread
 from discord import Embed
@@ -182,3 +182,16 @@ class Database:
             if self.is_duplicate(query, row):
                 duplicates.add(len(rows) - 1)
         return rows, duplicates, reloaded
+
+
+class DialectDatabase(Database):
+    def __init__(self, word_class: Type[Word], spreadsheet_key: str, convert_function: Callable[[str], str]):
+        self.convert_function = convert_function
+        super().__init__(word_class, spreadsheet_key)
+
+    def reload(self):
+        self.sheet_values = self.sheet.get_all_values()[self.word_class.leading_rows:]
+        for i, sheet_value in enumerate(self.sheet_values):
+            self.sheet_values[i][0] = self.convert_function(sheet_value[0])
+        self.last_reload = datetime.now()
+        return self
