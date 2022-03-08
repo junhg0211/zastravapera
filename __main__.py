@@ -148,13 +148,28 @@ async def sts(ctx: SlashContext, query: str):
 @slash.slash(
     name='reload',
     description='데이터베이스를 다시 불러옵니다.',
-    guild_ids=guild_ids
+    guild_ids=guild_ids,
+    options=[
+        create_option(
+            name='language',
+            description='데이터베이스를 불러올 언어를 설정합니다. 아무것도 입력하지 않으면 모든 언어의 데이터베이스를 다시 불러옵니다.',
+            required=False,
+            option_type=3,
+            choices=list(databases.keys())
+        )
+    ]
 )
-async def reload(ctx: SlashContext):
+async def reload(ctx: SlashContext, language: str = ''):
     message = await ctx.send('데이터베이스를 다시 불러옵니다…')
-    for database in databases.values():
-        database.reload()
-    await message.edit(content='데이터베이스를 다시 불러왔습니다.')
+    if language:
+        if language in databases:
+            databases[language].reload()
+        else:
+            await message.edit(content='데이터베이스 이름을 확인해주세요!!')
+    else:
+        for database in databases.values():
+            database.reload()
+    await message.edit(content=f'{f"`{language}`" if language else ""}데이터베이스를 다시 불러왔습니다.')
 
 
 @slash.slash(
