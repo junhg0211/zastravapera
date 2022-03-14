@@ -7,7 +7,9 @@ from discord_slash import SlashCommand, SlashContext
 from discord_slash.utils.manage_commands import create_option
 
 from const import get_secret, get_const
-from database import Database, DialectDatabase, ThravelemehWord, ZasokeseWord, BerquamWord
+from database import Database, DialectDatabase
+from database.hemelvaarht import ThravelemehWord
+from database.zasok import ZasokeseWord, BerquamWord
 from util import zasokese_to_simetasise
 
 bot = Bot(command_prefix='$$')
