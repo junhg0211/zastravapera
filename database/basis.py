@@ -6,7 +6,7 @@ import gspread
 from discord import Embed
 
 from const import get_const
-from new_package.general import normalise
+from util.general import normalise
 
 
 class Word:

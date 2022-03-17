@@ -10,8 +10,8 @@ from const import get_secret, get_const
 from database import Database, DialectDatabase
 from database.hemelvaarht import ThravelemehWord
 from database.zasok import ZasokeseWord, BerquamWord
-from new_package.simetasis import zasokese_to_simetasise
-from new_package.thravelemeh import WordGenerator
+from util.simetasis import zasokese_to_simetasise
+from util.thravelemeh import WordGenerator
 
 bot = Bot(command_prefix='$$')
 slash = SlashCommand(bot, sync_commands=True)

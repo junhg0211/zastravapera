@@ -1,5 +1,5 @@
 import random
-from new_package.thravelemeh import pool
+from util.thravelemeh import pool
 
 
 class WordGenerator:

@@ -1,4 +1,4 @@
-from new_package.general import normalise
+from util.general import normalise
 
 
 def zasokese_to_simetasise(sentence: str) -> str:
