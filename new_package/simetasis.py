@@ -1,15 +1,4 @@
-import unicodedata
-
-
-def normalise(string: str):
-    """
-    Removes all the diacritic in the string and return it.
-
-    :param string:
-    :return:
-    """
-
-    return ''.join(c for c in unicodedata.normalize('NFD', string) if unicodedata.category(c) != 'Mn').lower()
+from new_package.general import normalise
 
 
 def zasokese_to_simetasise(sentence: str) -> str:
@@ -52,4 +41,3 @@ def zasokese_to_simetasise(sentence: str) -> str:
         word += punctuation
         result += word + ' '
     return result.rstrip()
-
