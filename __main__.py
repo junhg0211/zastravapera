@@ -10,7 +10,8 @@ from const import get_secret, get_const
 from database import Database, DialectDatabase
 from database.hemelvaarht import ThravelemehWord
 from database.zasok import ZasokeseWord, BerquamWord
-from util import zasokese_to_simetasise
+from new_package.simetasis import zasokese_to_simetasise
+from new_package.thravelemeh import WordGenerator
 
 bot = Bot(command_prefix='$$')
 slash = SlashCommand(bot, sync_commands=True)
@@ -232,7 +233,27 @@ async def word(ctx: SlashContext, consonants: str, vowels: str, syllables: str, 
     )
     embed.add_field(name='단어 목록', value='\n'.join(words))
 
-    await message.edit(embed=embed)
+    await message.edit(embed=embed, content='')
+
+
+@slash.slash(
+    name='thword',
+    guild_ids=guild_ids,
+    description='랜덤한 트라벨레메 단어를 만들어줍니다.'
+)
+async def thword(ctx: SlashContext):
+    message = await ctx.send('단어 생성중입니다...')
+
+    generator = WordGenerator()
+    words = generator.generate_words()
+
+    embed = Embed(
+        title='랜덤 트라벨레메 단어',
+        color=get_const('hemelvaarht_hx_nerhgh')
+    )
+    embed.add_field(name='단어 목록', value='\n'.join(words))
+
+    await message.edit(embed=embed, content='')
 
 
 if __name__ == '__main__':
