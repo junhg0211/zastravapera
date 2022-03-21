@@ -8,6 +8,7 @@ from discord_slash.utils.manage_commands import create_option
 
 from const import get_secret, get_const
 from database import Database, DialectDatabase
+from database.felinkia import FelinkiaWord
 from database.hemelvaarht import ThravelemehWord
 from database.zasok import ZasokeseWord, BerquamWord
 from util.simetasis import zasokese_to_simetasise
@@ -18,7 +19,8 @@ slash = SlashCommand(bot, sync_commands=True)
 databases = {'zasokese': Database(ZasokeseWord, 'zasokese_database'),
              'thravelemeh': Database(ThravelemehWord, 'thravelemeh_database'),
              'berquam': Database(BerquamWord, 'zasokese_database', 1),
-             'simetasispika': DialectDatabase(ZasokeseWord, 'zasokese_database', zasokese_to_simetasise)}
+             'simetasispika': DialectDatabase(ZasokeseWord, 'zasokese_database', zasokese_to_simetasise),
+             'felinkia': Database(FelinkiaWord, 'felinkia_database')}
 
 guild_ids = list()
 
@@ -145,6 +147,27 @@ async def sts(ctx: SlashContext, query: str):
         title=f'`{query}`의 검색 결과',
         description='시메타시스어 단어를 검색합니다.',
         color=get_const('simetasis_color')
+    ), query)
+
+
+@slash.slash(
+    name='felinkia',
+    description='펠라인카이아어 단어를 검색합니다.',
+    guild_ids=guild_ids,
+    options=[
+        create_option(
+            name='query',
+            description='검색할 단어',
+            required=True,
+            option_type=3
+        )
+    ]
+)
+async def felinkia(ctx: SlashContext, query: str):
+    await handle_dictionary(ctx, databases['felinkia'], Embed(
+        title=f'`{query}`의 검색 결과',
+        description='펠라인카이아어 단어를 검색합니다.',
+        color=get_const('felinkia_color')
     ), query)
 
 
