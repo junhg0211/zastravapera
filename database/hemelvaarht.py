@@ -8,8 +8,7 @@ class ThravelemehWord(Word):
 
     def __init__(self, word: str, noun: str = '', verb: str = '', adj: str = '', adv: str = '', conj: str = '',
                  remark: str = '', cont: str = '', origin_language: str = '', origin: str = ''):
-        super().__init__()
-        self.word = word
+        super().__init__(word)
         self.noun = noun
         self.verb = verb
         self.adj = adj

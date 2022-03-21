@@ -13,11 +13,17 @@ class Word:
     back_slice = 0
     leading_rows = 1
 
-    def __init__(self):
-        pass
+    def __init__(self, word: str):
+        self.word = word
 
     def add_to_field(self, embed: Embed, special: bool = False) -> Embed:
-        pass
+        field_value = self.get_field_value()
+        embed.add_field(
+            name=f'**{self.word}**' if not special else f'__**{self.word}** (일치)__',
+            value=field_value,
+            inline=not (special or len(field_value) > 70)
+        )
+        return embed
 
     def get_field_value(self) -> str:
         pass

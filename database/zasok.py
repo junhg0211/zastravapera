@@ -8,8 +8,7 @@ class ZasokeseWord(Word):
 
     def __init__(self, word: str, noun: str = '', adj: str = '', verb: str = '', adv: str = '', prep: str = '',
                  conj: str = '', remark: str = '', derived_from_language: str = '', derived_from_word: str = ''):
-        super().__init__()
-        self.word = word
+        super().__init__(word)
         self.noun = noun
         self.adj = adj
         self.verb = verb
@@ -19,15 +18,6 @@ class ZasokeseWord(Word):
         self.remark = remark
         self.derived_from_language = derived_from_language
         self.derived_from_word = derived_from_word
-
-    def add_to_field(self, embed: Embed, special: bool = False) -> Embed:
-        field_value = self.get_field_value()
-        embed.add_field(
-            name=f'**{self.word}**' if not special else f'__**{self.word}** (일치)__',
-            value=field_value,
-            inline=not (special or len(field_value) > 70)
-        )
-        return embed
 
     def get_field_value(self) -> str:
         definitions = list()
