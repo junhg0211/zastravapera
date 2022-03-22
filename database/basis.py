@@ -79,3 +79,43 @@ class DialectDatabase(Database):
             self.sheet_values[i][0] = self.convert_function(sheet_value[0])
         self.last_reload = datetime.now()
         return self
+
+
+class PosWord(Word):
+    def __init__(self, word: str, pos: str, meaning: str):
+        super().__init__(word)
+        self.pos = pos
+        self.meaning = meaning
+
+    def get_field_value(self) -> str:
+        return f'[{self.pos}] {self.meaning}'
+
+
+class PosDatabase(Database):
+    def __init__(self, spreadsheet_key: str, sheet_number: int = 0,
+                 word_column: int = 0, pos_column: int = 1, meaning_column: int = 2):
+        super().__init__(PosWord, spreadsheet_key, sheet_number)
+        self.word_column = word_column
+        self.pos_column = pos_column
+        self.meaning_column = meaning_column
+
+    def is_duplicate(self, query: str, row: list) -> bool:
+        return normalise(query) == row[self.word_column] \
+            or normalise(query) in re.split(r'[,;] ', normalise(row[self.meaning_column]))
+
+    def search_rows(self, query: str) -> Tuple[List[Word], set, bool]:
+        reloaded = False
+        if self.last_reload + timedelta(weeks=1) < datetime.now():
+            self.reload()
+            reloaded = True
+        duplicates = set()
+        rows = list()
+        for j, row in enumerate(self.sheet_values):
+            if normalise(query) in normalise(row[self.word_column]) \
+                    or normalise(query) in normalise(row[self.meaning_column]):
+                # noinspection PyArgumentList
+                rows.append(self.word_class(row[self.word_column], row[self.pos_column], row[self.meaning_column]))
+            if self.is_duplicate(query, row):
+                duplicates.add(len(rows) - 1)
+        return rows, duplicates, reloaded
+
