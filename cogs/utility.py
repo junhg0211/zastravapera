@@ -1,4 +1,4 @@
-from random import choice
+from random import choice, randint
 
 from discord import Embed
 from discord.ext.commands import Cog, Bot
@@ -91,6 +91,45 @@ class UtilityCog(Cog):
         embed.add_field(name='단어 목록', value='\n'.join(words))
 
         await message.edit(embed=embed, content='')
+
+    @cog_ext.cog_slash(
+        description='주사위를 굴립니다.',
+        options=[
+            create_option(
+                name='kind',
+                description='주사위의 종류를 정합니다. (d4, d6, d8, d10, d12, d20, d100, d%) 등을 사용할 수 있습니다.',
+                option_type=3,
+                choices=['d4', 'd6', 'd8', 'd10', 'd12', 'd20', 'd100', 'd%'],
+                required=False
+            ),
+            create_option(
+                name='count',
+                description='굴리는 주사위의 개수',
+                option_type=4,
+                required=False
+            )
+        ]
+    )
+    async def dice(self, ctx: SlashContext, kind: str = 'd6', count: int = 1):
+        if kind == 'd%':
+            kind = 'd100'
+        kind = int(kind[1:])
+
+        dice = 0
+        numbers = list()
+        for _ in range(count):
+            number = randint(1, kind)
+            dice += number
+            numbers.append(number)
+
+        embed = Embed(
+            title='주사위 굴림',
+            description=f'{count}d{kind}'
+        )
+        embed.add_field(name='굴린 주사위', value=', '.join(map(str, numbers)))
+        embed.add_field(name='눈 합', value=str(dice))
+
+        await ctx.send(embed=embed)
 
 
 def setup(bot: Bot):

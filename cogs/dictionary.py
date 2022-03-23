@@ -8,8 +8,8 @@ from database import Database, DialectDatabase, PosDatabase
 from database.felinkia import FelinkiaWord
 from database.hemelvaarht import ThravelemehWord
 from database.zasok import ZasokeseWord, BerquamWord
-from utility import get_programwide
-from utility.simetasis import zasokese_to_simetasise
+from util import get_programwide
+from util.simetasis import zasokese_to_simetasise
 
 databases = {'zasokese': Database(ZasokeseWord, 'zasokese_database'),
              'thravelemeh': Database(ThravelemehWord, 'thravelemeh_database'),
