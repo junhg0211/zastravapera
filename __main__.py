@@ -1,5 +1,5 @@
 import random
-from datetime import datetime
+from os import listdir
 
 from discord import Embed
 from discord.ext.commands import Bot
@@ -7,217 +7,13 @@ from discord_slash import SlashCommand, SlashContext
 from discord_slash.utils.manage_commands import create_option
 
 from const import get_secret, get_const
-from database import Database, DialectDatabase, PosDatabase
-from database.felinkia import FelinkiaWord
-from database.hemelvaarht import ThravelemehWord
-from database.zasok import ZasokeseWord, BerquamWord
-from util.simetasis import zasokese_to_simetasise
+from util import set_programwide
 from util.thravelemeh import WordGenerator
 
-bot = Bot(command_prefix='$$')
+bot = Bot(command_prefix='$$', self_bot=True)
 slash = SlashCommand(bot, sync_commands=True)
-databases = {'zasokese': Database(ZasokeseWord, 'zasokese_database'),
-             'thravelemeh': Database(ThravelemehWord, 'thravelemeh_database'),
-             'berquam': Database(BerquamWord, 'zasokese_database', 1),
-             'simetasispika': DialectDatabase(ZasokeseWord, 'zasokese_database', zasokese_to_simetasise),
-             'felinkia': Database(FelinkiaWord, 'felinkia_database'),
-             '4351': PosDatabase('4351_database', 1, 0, 2, 3)}
 
-guild_ids = list()
-
-
-async def handle_dictionary(ctx: SlashContext, database: Database, embed: Embed, query: str):
-    message = await ctx.send(f'`{query}`에 대해 검색 중입니다…')
-
-    words, duplicates, reloaded = database.search_rows(query)
-    if len(words) > 25:
-        await message.edit(content='검색 결과가 너무 많습니다. 좀 더 자세히 검색해주세요.')
-        return
-
-    tmp = 0
-    while duplicates and words:
-        word = words.pop(duplicates.pop() - tmp)
-        word.add_to_field(embed, True)
-        tmp += 1
-    for word in words:
-        word.add_to_field(embed)
-    if not words and not tmp:
-        embed.add_field(name='검색 결과', value='검색 결과가 없습니다.')
-
-    await message.edit(content='데이터베이스를 다시 불러왔습니다.' if reloaded else '', embed=embed)
-
-
-@bot.event
-async def on_ready():
-    global guild_ids
-
-    guild_ids.clear()
-    for guild_id in get_const('guild_ids'):
-        guild = bot.get_guild(guild_id)
-        if guild is not None:
-            guild_ids.append(guild_id)
-            print(f'Bot loaded on guild {guild.name}')
-
-    print(f'Bot loaded. Bot is in {len(guild_ids)} guilds.')
-
-
-@bot.event
-async def on_command(ctx):
-    now = datetime.now()
-    print(f'{now} {ctx.guild.name} {ctx.author.name}#{ctx.author.discriminator}: {ctx.command.name}')
-
-
-@slash.slash(
-    name='zasok',
-    description='자소크어 단어를 검색합니다.',
-    guild_ids=guild_ids,
-    options=[
-        create_option(
-            name='query',
-            description='검색할 단어',
-            required=True,
-            option_type=3
-        )
-    ]
-)
-async def zasok(ctx: SlashContext, query: str):
-    await handle_dictionary(ctx, databases['zasokese'], Embed(
-        title=f'`{query}`의 검색 결과',
-        description='자소크어 단어를 검색합니다.',
-        color=get_const('shtelo_sch_vanilla')
-    ), query)
-
-
-@slash.slash(
-    name='th',
-    description='트라벨레메 단어를 검색합니다.',
-    guild_ids=guild_ids,
-    options=[
-        create_option(
-            name='query',
-            description='검색할 단어',
-            required=True,
-            option_type=3
-        )
-    ]
-)
-async def th(ctx: SlashContext, query: str):
-    await handle_dictionary(ctx, databases['thravelemeh'], Embed(
-        title=f'`{query}`의 검색 결과',
-        description='트라벨레메 단어를 검색합니다.',
-        color=get_const('hemelvaarht_hx_nerhgh')
-    ), query)
-
-
-@slash.slash(
-    name='berquam',
-    description='베르쿠암 단어를 검색합니다.',
-    guild_ids=guild_ids,
-    options=[
-        create_option(
-            name='query',
-            description='검색할 단어',
-            required=True,
-            option_type=3
-        )
-    ]
-)
-async def berquam(ctx: SlashContext, query: str):
-    await handle_dictionary(ctx, databases['berquam'], Embed(
-        title=f'`{query}`의 검색 결과',
-        description='베르쿠암 단어를 검색합니다.',
-        color=get_const('berquam_color')
-    ), query)
-
-
-@slash.slash(
-    name='sts',
-    description='시메타시스 단어를 검색합니다.',
-    guild_ids=guild_ids,
-    options=[
-        create_option(
-            name='query',
-            description='검색할 단어',
-            required=True,
-            option_type=3
-        )
-    ]
-)
-async def sts(ctx: SlashContext, query: str):
-    await handle_dictionary(ctx, databases['simetasispika'], Embed(
-        title=f'`{query}`의 검색 결과',
-        description='시메타시스어 단어를 검색합니다.',
-        color=get_const('simetasis_color')
-    ), query)
-
-
-@slash.slash(
-    name='felinkia',
-    description='펠라인카이아어 단어를 검색합니다.',
-    guild_ids=guild_ids,
-    options=[
-        create_option(
-            name='query',
-            description='검색할 단어',
-            required=True,
-            option_type=3
-        )
-    ]
-)
-async def felinkia(ctx: SlashContext, query: str):
-    await handle_dictionary(ctx, databases['felinkia'], Embed(
-        title=f'`{query}`의 검색 결과',
-        description='펠라인카이아어 단어를 검색합니다.',
-        color=get_const('felinkia_color')
-    ), query)
-
-
-@slash.slash(
-    name='sesame',
-    description='4351 단어를 검색합니다.',
-    guild_ids=guild_ids,
-    options=[
-        create_option(
-            name='query',
-            description='검색할 단어',
-            required=True,
-            option_type=3
-        )
-    ]
-)
-async def sesame(ctx: SlashContext, query: str):
-    await handle_dictionary(ctx, databases['4351'], Embed(
-        title=f'`{query}`의 검색 결과',
-        description='4351의 단어를 검색합니다.',
-        color=get_const('4351_color')
-    ), query)
-
-
-@slash.slash(
-    name='reload',
-    description='데이터베이스를 다시 불러옵니다.',
-    guild_ids=guild_ids,
-    options=[
-        create_option(
-            name='language',
-            description='데이터베이스를 불러올 언어를 설정합니다. 아무것도 입력하지 않으면 모든 언어의 데이터베이스를 다시 불러옵니다.',
-            required=False,
-            option_type=3,
-            choices=list(databases.keys())
-        )
-    ]
-)
-async def reload(ctx: SlashContext, language: str = ''):
-    message = await ctx.send('데이터베이스를 다시 불러옵니다…')
-    if language:
-        if language in databases:
-            databases[language].reload()
-        else:
-            await message.edit(content='데이터베이스 이름을 확인해주세요!!')
-    else:
-        for database in databases.values():
-            database.reload()
-    await message.edit(content=f'{f"`{language}`" if language else ""}데이터베이스를 다시 불러왔습니다.')
+guild_ids = set_programwide('guild_ids', list())
 
 
 @slash.slash(
@@ -299,6 +95,24 @@ async def thword(ctx: SlashContext):
     embed.add_field(name='단어 목록', value='\n'.join(words))
 
     await message.edit(embed=embed, content='')
+
+
+@bot.event
+async def on_ready():
+    guild_ids.clear()
+    for guild_id in get_const('guild_ids'):
+        guild = bot.get_guild(guild_id)
+        if guild is not None:
+            guild_ids.append(guild_id)
+            print(f'Bot loaded on guild {guild.name}')
+
+    print(f'Bot loaded. Bot is in {len(guild_ids)} guilds.')
+
+
+for file in listdir('cogs'):
+    if file.endswith('.py') and not file.startswith('_'):
+        bot.load_extension(f'cogs.{file[:-3]}')
+        print(f'Cog loaded: {file[:-3]}')
 
 
 if __name__ == '__main__':
