@@ -161,6 +161,7 @@ class UtilityCog(Cog):
 
     @cog_ext.cog_slash(
         description='자소크력을 계산합니다.',
+        guild_ids=guild_ids,
         options=[
             create_option(
                 name='year',
