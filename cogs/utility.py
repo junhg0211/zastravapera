@@ -131,6 +131,32 @@ class UtilityCog(Cog):
 
         await ctx.send(embed=embed)
 
+    @cog_ext.cog_slash(
+        description='계산 기능을 수행합니다.',
+        options=[
+            create_option(
+                name='operation',
+                description='수식을 입력합니다. (예: 1 + 2)',
+                option_type=3,
+                required=True
+            )
+        ]
+    )
+    async def calc(self, ctx: SlashContext, operation: str):
+        for letter in operation:
+            if letter not in '0123456789+-*/^()':
+                await ctx.send('잘못된 수식입니다.')
+                return
+
+        # noinspection PyBroadException
+        try:
+            result = eval(operation)
+        except Exception:
+            await ctx.send('잘못된 수식입니다.')
+            return
+        else:
+            await ctx.send(f'`{operation} =` __{result}__')
+
 
 def setup(bot: Bot):
     bot.add_cog(UtilityCog())
