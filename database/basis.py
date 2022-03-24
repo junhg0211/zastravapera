@@ -17,13 +17,17 @@ class Word:
         self.word = word
 
     def add_to_field(self, embed: Embed, special: bool = False) -> Embed:
+        field_name = self.get_field_name(special)
         field_value = self.get_field_value()
         embed.add_field(
-            name=f'**{self.word}**' if not special else f'__**{self.word}** (일치)__',
+            name=field_name,
             value=field_value,
             inline=not (special or len(field_value) > 70)
         )
         return embed
+
+    def get_field_name(self, special: bool) -> str:
+        return f'**{self.word}**' if not special else f'__**{self.word}** (일치)__'
 
     def get_field_value(self) -> str:
         pass
@@ -82,10 +86,15 @@ class DialectDatabase(Database):
 
 
 class PosWord(Word):
-    def __init__(self, word: str, pos: str, meaning: str):
+    def __init__(self, word: str, pos: str, meaning: str, note: str = ''):
         super().__init__(word)
         self.pos = pos
         self.meaning = meaning
+        self.note = note
+
+    def get_field_name(self, special: bool) -> str:
+        return (f'**{self.word}**' if not special else f'__**{self.word}** (일치)__') \
+               + (f' [{self.note}]' if self.note else '')
 
     def get_field_value(self) -> str:
         return f'[{self.pos}] {self.meaning}'
@@ -93,11 +102,12 @@ class PosWord(Word):
 
 class PosDatabase(Database):
     def __init__(self, spreadsheet_key: str, sheet_number: int = 0,
-                 word_column: int = 0, pos_column: int = 1, meaning_column: int = 2):
+                 word_column: int = 0, pos_column: int = 1, meaning_column: int = 2, note_column: int = -1):
         super().__init__(PosWord, spreadsheet_key, sheet_number)
         self.word_column = word_column
         self.pos_column = pos_column
         self.meaning_column = meaning_column
+        self.note_column = note_column
 
     def is_duplicate(self, query: str, row: list) -> bool:
         return normalise(query) == row[self.word_column] \
@@ -114,8 +124,8 @@ class PosDatabase(Database):
             if normalise(query) in normalise(row[self.word_column]) \
                     or normalise(query) in normalise(row[self.meaning_column]):
                 # noinspection PyArgumentList
-                rows.append(self.word_class(row[self.word_column], row[self.pos_column], row[self.meaning_column]))
+                rows.append(self.word_class(row[self.word_column], row[self.pos_column], row[self.meaning_column],
+                                            '' if self.note_column == -1 else row[self.note_column]))
             if self.is_duplicate(query, row):
                 duplicates.add(len(rows) - 1)
         return rows, duplicates, reloaded
-

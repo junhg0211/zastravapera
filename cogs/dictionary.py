@@ -16,7 +16,7 @@ databases = {'zasokese': Database(ZasokeseWord, 'zasokese_database'),
              'berquam': Database(BerquamWord, 'zasokese_database', 1),
              'simetasispika': DialectDatabase(ZasokeseWord, 'zasokese_database', zasokese_to_simetasise),
              'felinkia': Database(FelinkiaWord, 'felinkia_database'),
-             '4351': PosDatabase('4351_database', 1, 0, 2, 3)}
+             '4351': PosDatabase('4351_database', 1, 0, 2, 3, 1)}
 
 guild_ids = get_programwide('guild_ids')
 
