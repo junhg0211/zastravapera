@@ -215,7 +215,7 @@ class UtilityCog(Cog):
         sat_datetime = SatDatetime.get_from_datetime(now)
         await ctx.send(f'> 서력 {now.year}년 {now.month}월 {now.day}일 {now.hour}시 {now.minute}분 {now.second}초는\n'
                        f'> 자소크력은 __{sat_datetime.year}년 {sat_datetime.month}월 {sat_datetime.day}일 '
-                       f'{sat_datetime.hour}시 {sat_datetime.minute}분 {sat_datetime.second}초__ 입니다.')
+                       f'{sat_datetime.hour}시 {sat_datetime.minute}분 {sat_datetime.second:.1f}초__ 입니다.')
 
 
 def setup(bot: Bot):
