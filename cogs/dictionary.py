@@ -26,9 +26,10 @@ async def handle_dictionary(ctx: SlashContext, database: Database, embed: Embed,
     message = await ctx.send(f'`{query}`에 대해 검색 중입니다…')
 
     words, duplicates, reloaded = database.search_rows(query)
-    if len(words) > 25:
-        await message.edit(content='검색 결과가 너무 많습니다. 좀 더 자세히 검색해주세요.')
-        return
+    too_many = False
+    if (word_count := len(words)) > 25:
+        too_many = True
+        words = duplicates
 
     tmp = 0
     while duplicates and words:
@@ -39,6 +40,8 @@ async def handle_dictionary(ctx: SlashContext, database: Database, embed: Embed,
         word.add_to_field(embed)
     if not words and not tmp:
         embed.add_field(name='검색 결과', value='검색 결과가 없습니다.')
+    if too_many:
+        embed.add_field(name='기타', value=f'단어나 뜻에 `{query}`개 들어가는 단어가 {word_count - tmp} 개 더 있습니다.')
 
     await message.edit(content='데이터베이스를 다시 불러왔습니다.' if reloaded else '', embed=embed)
 
