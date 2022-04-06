@@ -14,7 +14,8 @@ class SesameWord(Word):
         self.notes = notes
 
     def get_field_name(self, special: bool) -> str:
-        return f'**{self.word}**' if not special else f'__**{self.word}** (일치)__'
+        return f'**{self.word}[{self.pronunciation}]**' if not special \
+            else f'__**{self.word}[{self.pronunciation}]** (일치)__'
 
     def get_field_value(self) -> str:
         definitions = list()
