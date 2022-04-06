@@ -4,9 +4,10 @@ from discord_slash import SlashContext, cog_ext
 from discord_slash.utils.manage_commands import create_option
 
 from const import get_const
-from database import Database, DialectDatabase, PosDatabase
+from database import Database, DialectDatabase
 from database.felinkia import FelinkiaWord
 from database.hemelvaarht import ThravelemehWord
+from database.sesame import SesameWord
 from database.zasok import ZasokeseWord, BerquamWord
 from util import get_programwide
 from util.simetasis import zasokese_to_simetasise
@@ -16,7 +17,7 @@ databases = {'zasokese': Database(ZasokeseWord, 'zasokese_database'),
              'berquam': Database(BerquamWord, 'zasokese_database', 1),
              'simetasispika': DialectDatabase(ZasokeseWord, 'zasokese_database', zasokese_to_simetasise),
              'felinkia': Database(FelinkiaWord, 'felinkia_database'),
-             '4351': PosDatabase('4351_database', 1, 0, 2, 3, 1)}
+             '4351': Database(SesameWord, '4351_database', 1)}
 
 guild_ids = get_programwide('guild_ids')
 

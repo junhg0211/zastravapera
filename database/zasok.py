@@ -1,5 +1,3 @@
-from discord import Embed
-
 from database import Word
 
 
@@ -40,22 +38,13 @@ class ZasokeseWord(Word):
 
 class BerquamWord(Word):
     def __init__(self, word: str, noun: str = '', adj: str = '', verb: str = '', adv: str = '', remark: str = ''):
-        super().__init__()
+        super().__init__(word)
         self.word = word
         self.noun = noun
         self.adj = adj
         self.verb = verb
         self.adv = adv
         self.remark = remark
-
-    def add_to_field(self, embed: Embed, special: bool = False) -> Embed:
-        field_value = self.get_field_value()
-        embed.add_field(
-            name=f'**{self.word}**' if not special else f'__**{self.word}** (일치)__',
-            value=field_value,
-            inline=not (special or len(field_value) > 70)
-        )
-        return embed
 
     def get_field_value(self) -> str:
         definitions = list()
