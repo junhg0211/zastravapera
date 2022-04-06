@@ -146,7 +146,7 @@ class UtilityCog(Cog):
     )
     async def calc(self, ctx: SlashContext, operation: str):
         for letter in operation:
-            if letter not in '0123456789+-*/^()':
+            if letter not in '0123456789+-*/^(). ':
                 await ctx.send('잘못된 수식입니다.')
                 return
 
