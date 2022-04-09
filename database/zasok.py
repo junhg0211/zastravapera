@@ -5,14 +5,13 @@ class ZasokeseWord(Word):
     back_slice = 2
 
     def __init__(self, word: str, noun: str = '', adj: str = '', verb: str = '', adv: str = '', prep: str = '',
-                 conj: str = '', remark: str = '', derived_from_language: str = '', derived_from_word: str = ''):
+                 remark: str = '', derived_from_language: str = '', derived_from_word: str = ''):
         super().__init__(word)
         self.noun = noun
         self.adj = adj
         self.verb = verb
         self.adv = adv
         self.prep = prep
-        self.conj = conj
         self.remark = remark
         self.derived_from_language = derived_from_language
         self.derived_from_word = derived_from_word
@@ -29,8 +28,6 @@ class ZasokeseWord(Word):
             definitions.append(f'부: {self.adv}')
         if self.prep:
             definitions.append(f'관: {self.prep}')
-        if self.conj:
-            definitions.append(f'접: {self.conj}')
         if self.remark:
             definitions.append(f'비고: {self.remark}')
         return '\n'.join(definitions)
