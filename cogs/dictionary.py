@@ -4,7 +4,7 @@ from discord_slash import SlashContext, cog_ext
 from discord_slash.utils.manage_commands import create_option
 
 from const import get_const
-from database import Database, DialectDatabase
+from database import Database, DialectDatabase, PosDatabase
 from database.felinkia import FelinkiaWord
 from database.hemelvaarht import ThravelemehWord
 from database.sesame import SesameWord
@@ -17,7 +17,8 @@ databases = {'zasokese': Database(ZasokeseWord, 'zasokese_database'),
              'berquam': Database(BerquamWord, 'zasokese_database', 1),
              'simetasispika': DialectDatabase(ZasokeseWord, 'zasokese_database', zasokese_to_simetasise),
              'felinkia': Database(FelinkiaWord, 'felinkia_database'),
-             '4351': Database(SesameWord, '4351_database', 1)}
+             '4351': Database(SesameWord, '4351_database', 1),
+             'semal': PosDatabase('semal_database')}
 
 guild_ids = get_programwide('guild_ids')
 
@@ -163,6 +164,26 @@ class DictionaryCog(Cog):
             title=f'`{query}`의 검색 결과',
             description='4351의 단어를 검색합니다.',
             color=get_const('4351_color')
+        ), query)
+
+    @cog_ext.cog_slash(
+        name='semal',
+        description='새말 단어를 검색합니다.',
+        guild_ids=guild_ids,
+        options=[
+            create_option(
+                name='query',
+                description='검색할 단어',
+                required=True,
+                option_type=3
+            )
+        ]
+    )
+    async def semal(self, ctx: SlashContext, query: str):
+        await handle_dictionary(ctx, databases['semal'], Embed(
+            title=f'`{query}`의 검색 결과',
+            description='새말 단어를 검색합니다.',
+            color=get_const('semal_color')
         ), query)
 
     @cog_ext.cog_slash(
