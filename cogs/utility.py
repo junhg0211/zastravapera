@@ -242,7 +242,8 @@ class UtilityCog(Cog):
         if not data['query']['search']:
             await ctx.send('검색 결과가 없습니다.')
             return
-        embed = Embed(title='제이위키 문서 검색 결과', color=get_const('jwiki_color'))
+
+        embed = Embed(title=f'`{query}` 제이위키 문서 검색 결과', color=get_const('jwiki_color'))
         for result in data['query']['search'][:25]:
             embed.add_field(
                 name=result['title'],
