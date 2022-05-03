@@ -1,9 +1,10 @@
 from datetime import datetime
 from random import choice, randint
 
+import requests
 from discord import Embed
 from discord.ext.commands import Cog, Bot
-from discord_slash import cog_ext, SlashContext
+from discord_slash import cog_ext, SlashContext, SlashCommandOptionType
 from discord_slash.utils.manage_commands import create_option
 from sat_datetime import SatDatetime
 
@@ -216,6 +217,38 @@ class UtilityCog(Cog):
         await ctx.send(f'> 서력 {now.year}년 {now.month}월 {now.day}일 {now.hour}시 {now.minute}분 {now.second}초는\n'
                        f'> 자소크력은 __{sat_datetime.year}년 {sat_datetime.month}월 {sat_datetime.day}일 '
                        f'{sat_datetime.hour}시 {sat_datetime.minute}분 {sat_datetime.second:.1f}초__ 입니다.')
+
+    @cog_ext.cog_slash(
+        description='제이위키 문서릅 검색합니다.',
+        guild_ids=guild_ids,
+        options=[
+            create_option(
+                name='query',
+                description='검색어를 입력합니다.',
+                option_type=SlashCommandOptionType.STRING,
+                required=True
+            )
+        ]
+    )
+    async def jwiki(self, ctx: SlashContext, query: str):
+        response = requests.get(f'https://jwiki.kr/wiki/api.php?action=query&list=search&srsearch={query}&format=json')
+        if response.status_code != 200:
+            await ctx.send('제이위키 문서 검색에 실패했습니다.')
+            return
+        data = response.json()
+        if 'query' not in data or 'search' not in data['query']:
+            await ctx.send('제이위키 문서 검색에 실패했습니다.')
+            return
+        if not data['query']['search']:
+            await ctx.send('검색 결과가 없습니다.')
+            return
+        embed = Embed(title='제이위키 문서 검색 결과', color=get_const('jwiki_color'))
+        for result in data['query']['search'][:25]:
+            embed.add_field(
+                name=result['title'],
+                value=f'[보러 가기](https://jwiki.kr/wiki/index.php/{result["title"].replace(" ", "_")})',
+                inline=False)
+        await ctx.send(embed=embed)
 
 
 def setup(bot: Bot):
