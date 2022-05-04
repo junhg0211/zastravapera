@@ -1,6 +1,6 @@
 from discord import Embed
 from discord.ext.commands import Cog, Bot
-from discord_slash import SlashContext, cog_ext
+from discord_slash import SlashContext, cog_ext, SlashCommandOptionType
 from discord_slash.utils.manage_commands import create_option
 
 from const import get_const
@@ -12,13 +12,16 @@ from database.zasok import ZasokeseWord, BerquamWord
 from util import get_programwide
 from util.simetasis import zasokese_to_simetasise
 
-databases = {'zasokese': Database(ZasokeseWord, 'zasokese_database'),
-             'thravelemeh': Database(ThravelemehWord, 'thravelemeh_database'),
-             'berquam': Database(BerquamWord, 'zasokese_database', 1),
-             'simetasispika': DialectDatabase(ZasokeseWord, 'zasokese_database', zasokese_to_simetasise),
-             'felinkia': Database(FelinkiaWord, 'felinkia_database'),
-             '4351': Database(SesameWord, '4351_database', 1),
-             'semal': PosDatabase('semal_database')}
+databases = {
+    'zasokese': Database(ZasokeseWord, 'zasokese_database'),
+    'thravelemeh': Database(ThravelemehWord, 'thravelemeh_database'),
+    'berquam': Database(BerquamWord, 'zasokese_database', 1),
+    'simetasispika': DialectDatabase(ZasokeseWord, 'zasokese_database', zasokese_to_simetasise),
+    'felinkia': Database(FelinkiaWord, 'felinkia_database'),
+    '4351': Database(SesameWord, '4351_database', 1),
+    'semal': PosDatabase('semal_database'),
+    'xei': PosDatabase('xei_database', 0, 0, 2, 3),
+}
 
 guild_ids = get_programwide('guild_ids')
 
@@ -184,6 +187,26 @@ class DictionaryCog(Cog):
             title=f'`{query}`의 검색 결과',
             description='새말 단어를 검색합니다.',
             color=get_const('semal_color')
+        ), query)
+
+    @cog_ext.cog_slash(
+        name='xei',
+        description='헤이어 단어를 검색합니다.',
+        guild_ids=guild_ids,
+        options=[
+            create_option(
+                name='query',
+                description='검색할 단어',
+                required=True,
+                option_type=SlashCommandOptionType.STRING
+            )
+        ]
+    )
+    async def xei(self, ctx: SlashContext, query: str):
+        await handle_dictionary(ctx, databases['xei'], Embed(
+            title=f'`{query}`의 검색 결과',
+            description='헤이어 단어를 검색합니다.',
+            color=get_const('xei_color')
         ), query)
 
     @cog_ext.cog_slash(
