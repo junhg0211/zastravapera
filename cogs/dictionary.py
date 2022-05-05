@@ -1,3 +1,5 @@
+from asyncio import sleep
+
 from discord import Embed
 from discord.ext.commands import Cog, Bot
 from discord_slash import SlashContext, cog_ext, SlashCommandOptionType
@@ -232,7 +234,8 @@ class DictionaryCog(Cog):
         else:
             for database in databases.values():
                 database.reload()
-        await message.edit(content=f'{f"`{language}` " if language else ""}데이터베이스를 다시 불러왔습니다.')
+                await sleep(0)
+        await message.edit(content=f'{f"`{language}` " if language else ""} 데이터베이스를 다시 불러왔습니다.')
 
 
 def setup(bot: Bot):
