@@ -1,8 +1,9 @@
 from datetime import datetime
 from random import choice, randint
+from typing import Optional
 
 import requests
-from discord import Embed, utils
+from discord import Embed, utils, TextChannel
 from discord.ext import tasks
 from discord.ext.commands import Cog, Bot
 from discord_slash import cog_ext, SlashContext, SlashCommandOptionType
@@ -18,8 +19,9 @@ guild_ids = get_programwide('guild_ids')
 
 class UtilityCog(Cog):
     def __init__(self, bot: Bot):
-        sat_guild = bot.get_guild(get_const('sat_guild_id'))
-        self.main_channel = sat_guild.get_channel(get_const('main_channel_id'))
+        self.bot = bot
+
+        self.main_channel: Optional[TextChannel] = None
 
         self.last_recent_changes = datetime.now()
 
@@ -27,6 +29,10 @@ class UtilityCog(Cog):
 
     @tasks.loop(seconds=600)
     async def track_recent_changes(self):
+        if self.main_channel is None:
+            self.main_channel = self.bot.get_channel(get_const('main_channel_id'))
+            return
+
         changes = jwiki.get_recent_changes(from_=self.last_recent_changes)
 
         embed = Embed(title='최근 변경된 문서', description=str(self.last_recent_changes), color=get_const('sat_color'))
