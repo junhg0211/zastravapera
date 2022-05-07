@@ -81,7 +81,7 @@ class UtilityCog(Cog):
             await self.main_channel.send(embed=embed)
         else:
             await self.main_channel.send(
-                f'최근 10분간 변경된 문서가 없습니다. 제이위키 `[[분류:사트]]` 문서에 변경 사항이 발생되면 알려드리겠습니다.', delete_after=1000)
+                f'최근에 변경된 문서가 없습니다. 제이위키 `[[분류:사트]]` 문서에 변경 사항이 발생되면 알려드리겠습니다.', delete_after=1000)
 
         self.last_recent_changes = datetime.now()
 
