@@ -71,9 +71,9 @@ class UtilityCog(Cog):
             embed = Embed(title='최근 변경된 문서', description=str(self.last_recent_changes), color=get_const('sat_color'))
             for title, (oldid, diff, creator) in result.items():
                 embed.add_field(
-                    name=f'[{title}](https://jwiki.kr/wiki/index.php?'
-                         f'title={title.replace(" ", "_")}&oldid={oldid}&diff={diff})',
-                    value=f'{creator}가 마지막으로 수정함'
+                    name=f'{title}',
+                    value=f'`{creator}`님이 마지막으로 [수정](https://jwiki.kr/wiki/index.php?'
+                          f'title={title.replace(" ",  "_")}&oldid={oldid}&diff={diff})함.'
                 )
             await self.main_channel.send(embed=embed)
         else:
