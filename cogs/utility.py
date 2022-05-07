@@ -28,6 +28,9 @@ class UtilityCog(Cog):
 
         self.track_recent_changes.start()
 
+    def cog_unload(self):
+        self.track_recent_changes.cancel()
+
     @tasks.loop(seconds=600)
     async def track_recent_changes(self):
         while self.main_channel is None:
@@ -49,8 +52,7 @@ class UtilityCog(Cog):
             await self.main_channel.send(embed=embed)
         else:
             await self.main_channel.send(
-                f'최근 10분간 변경된 문서가 없습니다. 제이위키 `[[분류:사트]]` 문서에 변경 사항이 발생되면 알려드리겠습니다. '
-                f'이 메시지는 1분 후에 삭제됩니다.', delete_after=60)
+                f'최근 10분간 변경된 문서가 없습니다. 제이위키 `[[분류:사트]]` 문서에 변경 사항이 발생되면 알려드리겠습니다.', delete_after=600)
         self.last_recent_changes = datetime.now()
 
     @cog_ext.cog_slash(
