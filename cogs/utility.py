@@ -43,9 +43,9 @@ class UtilityCog(Cog):
 
         changes = jwiki.get_recent_changes(from_=self.last_recent_changes)['rss']['channel']
 
+        result: Dict[str, List[int, int]] = dict()
         if 'item' in changes:
             changes = changes['item']
-            result: Dict[str, List[int, int]] = dict()
             for change in changes:
                 try:
                     # try because sometimes ``in`` operation causes TypeError
@@ -68,6 +68,7 @@ class UtilityCog(Cog):
                     else:
                         result[title] = [oldid, diff, change['dc:creator']]
 
+        if result:
             embed = Embed(title='최근 변경된 문서', description=str(self.last_recent_changes), color=get_const('sat_color'))
             for title, (oldid, diff, creator) in result.items():
                 embed.add_field(
