@@ -1,3 +1,4 @@
+from asyncio import sleep
 from datetime import datetime
 from random import choice, randint
 from typing import Optional
@@ -29,9 +30,9 @@ class UtilityCog(Cog):
 
     @tasks.loop(seconds=600)
     async def track_recent_changes(self):
-        if self.main_channel is None:
+        while self.main_channel is None:
             self.main_channel = self.bot.get_channel(get_const('main_channel_id'))
-            return
+            await sleep(1)
 
         changes = jwiki.get_recent_changes(from_=self.last_recent_changes)
 
