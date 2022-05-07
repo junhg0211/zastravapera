@@ -2,7 +2,7 @@ from datetime import datetime
 from random import choice, randint
 
 import requests
-from discord import Embed, TextChannel
+from discord import Embed, TextChannel, utils
 from discord.ext import tasks
 from discord.ext.commands import Cog, Bot
 from discord_slash import cog_ext, SlashContext, SlashCommandOptionType
@@ -18,9 +18,9 @@ guild_ids = get_programwide('guild_ids')
 
 class UtilityCog(Cog):
     def __init__(self, bot: Bot):
-        self.main_channel: TextChannel = bot \
-            .get_guild(get_const('sat_guild_id')) \
-            .get_channel(get_const('main_channel_id'))
+        sat_guild = utils.get(bot.guilds, id=get_const('sat_guild_id'))
+        self.main_channel = utils.get(sat_guild.channels, id=get_const('main_channel_id'))
+
         self.last_recent_changes = datetime.now()
 
         self.track_recent_changes.start()
