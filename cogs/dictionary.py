@@ -38,17 +38,17 @@ async def handle_dictionary(ctx: SlashContext, database: Database, embed: Embed,
         words = list(map(lambda x: words[x], duplicates))
         duplicates = set()
 
-    tmp = 0
+    index_offset = 0
     while duplicates and words:
-        word = words.pop(duplicates.pop() - tmp)
+        word = words.pop(duplicates.pop() - index_offset)
         word.add_to_field(embed, True)
-        tmp += 1
+        index_offset += 1
     for word in words:
         word.add_to_field(embed)
-    if not words and not tmp:
+    if not words and not index_offset:
         embed.add_field(name='검색 결과', value='검색 결과가 없습니다.')
     if too_many:
-        embed.add_field(name='기타', value=f'단어나 뜻에 `{query}`개 들어가는 단어가 {word_count - tmp} 개 더 있습니다.')
+        embed.add_field(name='기타', value=f'단어나 뜻에 `{query}`가 들어가는 단어가 {word_count - tmp} 개 더 있습니다.')
 
     await message.edit(content='데이터베이스를 다시 불러왔습니다.' if reloaded else '', embed=embed)
 
