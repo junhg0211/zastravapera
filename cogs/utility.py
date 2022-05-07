@@ -1,7 +1,8 @@
 from asyncio import sleep
 from datetime import datetime
 from random import choice, randint
-from typing import Optional
+from typing import Optional, Dict, List
+from urllib import parse
 
 import requests
 from discord import Embed, TextChannel
@@ -31,7 +32,8 @@ class UtilityCog(Cog):
     def cog_unload(self):
         self.track_recent_changes.cancel()
 
-    @tasks.loop(seconds=600)
+    # noinspection PyTypeChecker
+    @tasks.loop(seconds=1000)
     async def track_recent_changes(self):
         while self.main_channel is None:
             self.main_channel = self.bot.get_channel(get_const('main_channel_id'))
@@ -39,23 +41,42 @@ class UtilityCog(Cog):
 
         changes = jwiki.get_recent_changes(from_=self.last_recent_changes)['rss']['channel']
 
-        embed = Embed(title='최근 변경된 문서', description=str(self.last_recent_changes), color=get_const('sat_color'))
-
         if 'item' in changes:
             changes = changes['item']
+            result: Dict[str, List[int, int]] = dict()
             for change in changes:
                 try:
-                    if '사트' in jwiki.get_categories(change['title']):
-                        embed.add_field(
-                            name=change['title'],
-                            value=f'[{change["pubDate"]}]({change["link"]})'
-                        )
+                    # try because sometimes ``in`` operation causes TypeError
+                    # but don't know why
+                    if '사트' not in jwiki.get_categories(change['title']):
+                        continue
                 except TypeError as e:
                     print(e)
+                else:
+                    # merge duplicated changes
+                    parsed = parse.parse_qs(parse.urlsplit(change['link']).query)
+                    title = parsed['title'][0]
+                    diff = int(parsed['diff'][0])
+                    oldid = int(parsed['oldid'][0])
+                    if title in result:
+                        original_oldid = int(result[title][0])
+                        original_diff = int(result[title][1])
+                        result[title][0] = min(original_oldid, oldid)
+                        result[title][1] = max(original_diff, diff)
+                    else:
+                        result[title] = [oldid, diff, change['dc:creator']]
+
+            embed = Embed(title='최근 변경된 문서', description=str(self.last_recent_changes), color=get_const('sat_color'))
+            for title, (oldid, diff, creator) in result.items():
+                embed.add_field(
+                    name=f'[{title}](https://jwiki.kr/wiki/index.php?'
+                         f'title={title.replace(" ", "_")}&oldid={oldid}&diff={diff})',
+                    value=f'{creator}가 마지막으로 수정함'
+                )
             await self.main_channel.send(embed=embed)
         else:
             await self.main_channel.send(
-                f'최근 10분간 변경된 문서가 없습니다. 제이위키 `[[분류:사트]]` 문서에 변경 사항이 발생되면 알려드리겠습니다.', delete_after=600)
+                f'최근 10분간 변경된 문서가 없습니다. 제이위키 `[[분류:사트]]` 문서에 변경 사항이 발생되면 알려드리겠습니다.', delete_after=1000)
         self.last_recent_changes = datetime.now()
 
     @cog_ext.cog_slash(
