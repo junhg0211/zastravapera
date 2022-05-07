@@ -1,12 +1,13 @@
 from os import listdir
 
+from discord import Intents
 from discord.ext.commands import Bot
 from discord_slash import SlashCommand
 
 from const import get_secret, get_const
 from util import set_programwide
 
-bot = Bot(command_prefix='$$', self_bot=True)
+bot = Bot(command_prefix='$$', self_bot=True, intents=Intents.all())
 slash = SlashCommand(bot, sync_commands=True)
 
 guild_ids = set_programwide('guild_ids', list())

@@ -18,8 +18,8 @@ guild_ids = get_programwide('guild_ids')
 
 class UtilityCog(Cog):
     def __init__(self, bot: Bot):
-        sat_guild = utils.get(bot.guilds, id=get_const('sat_guild_id'))
-        self.main_channel = utils.get(sat_guild.channels, id=get_const('main_channel_id'))
+        # self.main_channel = utils.get(bot.get_all_channels(), id=get_const('main_channel_id'))
+        self.main_channel = bot.get_channel(get_const('main_channel_id'))
 
         self.last_recent_changes = datetime.now()
 
