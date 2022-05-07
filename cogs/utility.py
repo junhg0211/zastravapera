@@ -2,20 +2,49 @@ from datetime import datetime
 from random import choice, randint
 
 import requests
-from discord import Embed
+from discord import Embed, TextChannel
+from discord.ext import tasks
 from discord.ext.commands import Cog, Bot
 from discord_slash import cog_ext, SlashContext, SlashCommandOptionType
 from discord_slash.utils.manage_commands import create_option
 from sat_datetime import SatDatetime
 
 from const import get_const
-from util import get_programwide
+from util import get_programwide, jwiki
 from util.thravelemeh import WordGenerator
 
 guild_ids = get_programwide('guild_ids')
 
 
 class UtilityCog(Cog):
+    def __init__(self, bot: Bot):
+        self.main_channel: TextChannel = bot.get_channel(get_const('main_channel_id'))
+        self.last_recent_changes = datetime.now()
+
+        self.track_recent_changes.start()
+
+    @tasks.loop(seconds=600)
+    async def track_recent_changes(self):
+        changes = jwiki.get_recent_changes(from_=self.last_recent_changes)
+
+        embed = Embed(title='최근 변경된 문서', description=str(self.last_recent_changes), color=get_const('sat_color'))
+
+        if 'item' in changes:
+            changes = changes['item']
+            for change in changes:
+                if '사트' in jwiki.get_categories(change['title']):
+                    embed.add_field(
+                        name=change['title'],
+                        value=f'[{change["pubDate"]}]({change["link"]})'
+                    )
+            await self.main_channel.send(embed=embed)
+        else:
+            await self.main_channel.send(
+                f'최근 변경된 문서가 없습니다. 제이위키 `[[분류:사트]]` 문서에 변경 사항이 발생되면 알려드리겠습니다. '
+                f'이 메시지는 1분 후에 삭제됩니다.\n'
+                f'> {self.last_recent_changes}', delete_after=60)
+        self.last_recent_changes = datetime.now()
+
     @cog_ext.cog_slash(
         name='word',
         description='랜덤한 단어를 만들어줍니다.',
