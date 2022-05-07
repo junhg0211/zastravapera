@@ -44,11 +44,14 @@ class UtilityCog(Cog):
         if 'item' in changes:
             changes = changes['item']
             for change in changes:
-                if '사트' in jwiki.get_categories(change['title']):
-                    embed.add_field(
-                        name=change['title'],
-                        value=f'[{change["pubDate"]}]({change["link"]})'
-                    )
+                try:
+                    if '사트' in jwiki.get_categories(change['title']):
+                        embed.add_field(
+                            name=change['title'],
+                            value=f'[{change["pubDate"]}]({change["link"]})'
+                        )
+                except TypeError as e:
+                    print(e)
             await self.main_channel.send(embed=embed)
         else:
             await self.main_channel.send(
