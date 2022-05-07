@@ -2,6 +2,8 @@ from util.general import normalise
 
 
 def zasokese_to_simetasise(sentence: str) -> str:
+    """ 자소크어 문자열을 시메타시스어 문자열로 변환합니다. """
+
     result = ''
     words = sentence.split(' ')
     for word in words:

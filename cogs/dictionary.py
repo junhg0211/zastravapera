@@ -29,6 +29,14 @@ guild_ids = get_programwide('guild_ids')
 
 
 async def handle_dictionary(ctx: SlashContext, database: Database, embed: Embed, query: str):
+    """
+    Handles the dictionary command.
+
+    :param ctx:
+    :param database:
+    :param embed:
+    :param query: 검색어
+    """
     message = await ctx.send(f'`{query}`에 대해 검색 중입니다…')
 
     words, duplicates, reloaded = database.search_rows(query)

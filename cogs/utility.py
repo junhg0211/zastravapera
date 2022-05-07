@@ -35,6 +35,8 @@ class UtilityCog(Cog):
     # noinspection PyTypeChecker
     @tasks.loop(seconds=1000)
     async def track_recent_changes(self):
+        """ Jwiki 최근 변경 내역 중에서 사트 카테고리가 포함된 변경 사항을 채팅 채널에 전송합니다. """
+
         while self.main_channel is None:
             self.main_channel = self.bot.get_channel(get_const('main_channel_id'))
             await sleep(1)
@@ -77,6 +79,7 @@ class UtilityCog(Cog):
         else:
             await self.main_channel.send(
                 f'최근 10분간 변경된 문서가 없습니다. 제이위키 `[[분류:사트]]` 문서에 변경 사항이 발생되면 알려드리겠습니다.', delete_after=1000)
+        print('Jwiki changes tracked:', self.last_recent_changes)
         self.last_recent_changes = datetime.now()
 
     @cog_ext.cog_slash(
