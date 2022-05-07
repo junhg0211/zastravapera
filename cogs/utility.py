@@ -34,7 +34,7 @@ class UtilityCog(Cog):
             self.main_channel = self.bot.get_channel(get_const('main_channel_id'))
             await sleep(1)
 
-        changes = jwiki.get_recent_changes(from_=self.last_recent_changes)
+        changes = jwiki.get_recent_changes(from_=self.last_recent_changes)['rss']['channel']
 
         embed = Embed(title='최근 변경된 문서', description=str(self.last_recent_changes), color=get_const('sat_color'))
 
