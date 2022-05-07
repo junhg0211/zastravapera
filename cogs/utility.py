@@ -4,7 +4,7 @@ from random import choice, randint
 from typing import Optional
 
 import requests
-from discord import Embed, utils, TextChannel
+from discord import Embed, TextChannel
 from discord.ext import tasks
 from discord.ext.commands import Cog, Bot
 from discord_slash import cog_ext, SlashContext, SlashCommandOptionType
