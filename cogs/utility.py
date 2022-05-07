@@ -2,7 +2,7 @@ from datetime import datetime
 from random import choice, randint
 
 import requests
-from discord import Embed, TextChannel, utils
+from discord import Embed, utils
 from discord.ext import tasks
 from discord.ext.commands import Cog, Bot
 from discord_slash import cog_ext, SlashContext, SlashCommandOptionType
