@@ -36,6 +36,7 @@ async def handle_dictionary(ctx: SlashContext, database: Database, embed: Embed,
     if (word_count := len(words)) > 25:
         too_many = True
         words = list(map(lambda x: words[x], duplicates))
+        duplicates = set()
 
     tmp = 0
     while duplicates and words:
