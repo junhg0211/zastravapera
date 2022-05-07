@@ -282,4 +282,4 @@ class UtilityCog(Cog):
 
 
 def setup(bot: Bot):
-    bot.add_cog(UtilityCog())
+    bot.add_cog(UtilityCog(bot))
