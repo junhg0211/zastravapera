@@ -18,7 +18,9 @@ guild_ids = get_programwide('guild_ids')
 
 class UtilityCog(Cog):
     def __init__(self, bot: Bot):
-        self.main_channel: TextChannel = bot.get_channel(get_const('main_channel_id'))
+        self.main_channel: TextChannel = bot \
+            .get_guild(get_const('sat_guild_id')) \
+            .get_channel(get_const('main_channel_id'))
         self.last_recent_changes = datetime.now()
 
         self.track_recent_changes.start()
