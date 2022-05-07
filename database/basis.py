@@ -55,6 +55,16 @@ class Database:
         return self
 
     def search_rows(self, query: str) -> Tuple[List[Word], set, bool]:
+        """
+        rows: 단어 목록
+
+        duplicates: query와 뜻이나 단어 모양이 일치하는 단어 - 중요한 단어의 rows 내 index
+
+        reloaded: 데이터베이스가 새로 로드되었는가
+
+        :param query: 찾을 단어
+        :return: rows, duplicates, reloaded
+        """
         reloaded = False
         if self.last_reload + timedelta(weeks=1) < datetime.now():
             self.reload()
