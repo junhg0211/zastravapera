@@ -69,7 +69,9 @@ class UtilityCog(Cog):
                         result[title] = [oldid, diff, change['dc:creator']]
 
         if result:
-            embed = Embed(title='최근 변경된 문서', description=str(self.last_recent_changes), color=get_const('sat_color'))
+            embed = Embed(
+                title='최근 변경된 문서', description=f'{self.last_recent_changes}부터',
+                color=get_const('sat_color'))
             for title, (oldid, diff, creator) in result.items():
                 embed.add_field(
                     name=f'{title}',
@@ -80,7 +82,7 @@ class UtilityCog(Cog):
         else:
             await self.main_channel.send(
                 f'최근 10분간 변경된 문서가 없습니다. 제이위키 `[[분류:사트]]` 문서에 변경 사항이 발생되면 알려드리겠습니다.', delete_after=1000)
-        print('Jwiki changes tracked:', self.last_recent_changes)
+
         self.last_recent_changes = datetime.now()
 
     @cog_ext.cog_slash(
