@@ -1,5 +1,5 @@
 from asyncio import sleep
-from datetime import datetime
+from datetime import datetime, timedelta
 from random import choice, randint
 from typing import Optional, Dict, List
 from urllib import parse
@@ -15,6 +15,8 @@ from sat_datetime import SatDatetime
 from const import get_const
 from util import get_programwide, jwiki
 from util.thravelemeh import WordGenerator
+
+RECENT_CHANGE_DURATION = 10 * 60
 
 guild_ids = get_programwide('guild_ids')
 
@@ -33,20 +35,19 @@ class UtilityCog(Cog):
         self.track_recent_changes.cancel()
 
     # noinspection PyTypeChecker
-    @tasks.loop(seconds=1000)
-    async def track_recent_changes(self):
-        """ Jwiki 최근 변경 내역 중에서 사트 카테고리가 포함된 변경 사항을 채팅 채널에 전송합니다. """
-
-        while self.main_channel is None:
-            self.main_channel = self.bot.get_channel(get_const('main_channel_id'))
-            await sleep(1)
+    async def recent_changes(self, ctx: Optional[SlashContext], channel: TextChannel):
+        if ctx is not None:
+            send = ctx.send
+        else:
+            send = channel.send
 
         changes = jwiki.get_recent_changes(from_=self.last_recent_changes)['rss']['channel']
 
-        result: Dict[str, List[int, int]] = dict()
+        result: Dict[str, List[int, int, str]] = dict()
         if 'item' in changes:
             changes = changes['item']
             for change in changes:
+                await sleep(0)
                 try:
                     # try because sometimes ``in`` operation causes TypeError
                     # but don't know why
@@ -81,12 +82,36 @@ class UtilityCog(Cog):
                     value=f'`{creator}`님이 마지막으로 [수정](https://jwiki.kr/wiki/index.php?'
                           f'title={title.replace(" ",  "_")}&oldid={oldid}&diff={diff})함.'
                 )
-            await self.main_channel.send(embed=embed)
+            await send(embed=embed)
         else:
-            await self.main_channel.send(
-                f'최근에 변경된 문서가 없습니다. 제이위키 `[[분류:사트]]` 문서에 변경 사항이 발생되면 알려드리겠습니다.', delete_after=1000)
+            await send(
+                f'최근에 변경된 문서가 없습니다. 제이위키 `[[분류:사트]]` 문서에 변경 사항이 발생되면 알려드리겠습니다.',
+                delete_after=RECENT_CHANGE_DURATION / 2)
 
         self.last_recent_changes = datetime.now()
+
+    @tasks.loop(seconds=10)
+    async def track_recent_changes(self):
+        """ Jwiki 최근 변경 내역 중에서 사트 카테고리가 포함된 변경 사항을 채팅 채널에 전송합니다. """
+
+        if datetime.now() - self.last_recent_changes < timedelta(seconds=RECENT_CHANGE_DURATION):
+            return
+
+        while self.main_channel is None:
+            self.main_channel = self.bot.get_channel(get_const('main_channel_id'))
+            await sleep(1)
+
+        await self.recent_changes(self.main_channel)
+
+    @cog_ext.cog_slash(
+        name='recent',
+        description='최근 발생한 사트 변경 사항을 채팅 채널에 전송합니다.',
+        guild_ids=guild_ids
+    )
+    async def recent_changes(self, ctx: SlashContext):
+        """ 최근 발생한 사트 변경 사항을 채팅 채널에 전송합니다. """
+
+        await self.recent_changes(ctx, ctx.channel)
 
     @cog_ext.cog_slash(
         name='word',
