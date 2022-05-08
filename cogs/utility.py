@@ -101,7 +101,7 @@ class UtilityCog(Cog):
             self.main_channel = self.bot.get_channel(get_const('main_channel_id'))
             await sleep(1)
 
-        await self.recent_changes(self.main_channel)
+        await self.recent_changes(None, self.main_channel)
 
     @cog_ext.cog_slash(
         name='recent',
