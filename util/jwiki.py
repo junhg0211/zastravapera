@@ -13,7 +13,10 @@ def get_categories(title: str) -> List[str]:
 
     r = requests.get(f'{JWIKI_API}?action=parse&page={title}&prop=categories&format=json')
     j = r.json()
-    return list(map(lambda x: x['*'], j['parse']['categories']))
+    try:
+        return list(map(lambda x: x['*'], j['parse']['categories']))
+    except KeyError:
+        return list()
 
 
 def get_recent_changes(*, from_: Optional[datetime] = None):
