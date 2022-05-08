@@ -108,7 +108,7 @@ class UtilityCog(Cog):
         description='최근 발생한 사트 변경 사항을 채팅 채널에 전송합니다.',
         guild_ids=guild_ids
     )
-    async def recent_changes(self, ctx: SlashContext):
+    async def recent(self, ctx: SlashContext):
         """ 최근 발생한 사트 변경 사항을 채팅 채널에 전송합니다. """
 
         await self.recent_changes(ctx, ctx.channel)
