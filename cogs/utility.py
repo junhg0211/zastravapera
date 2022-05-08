@@ -74,7 +74,7 @@ class UtilityCog(Cog):
                 color=get_const('sat_color'))
             for title, (oldid, diff, creator) in result.items():
                 embed.add_field(
-                    name=f'{title}',
+                    name=title.replace('_', ' '),
                     value=f'`{creator}`님이 마지막으로 [수정](https://jwiki.kr/wiki/index.php?'
                           f'title={title.replace(" ",  "_")}&oldid={oldid}&diff={diff})함.'
                 )
