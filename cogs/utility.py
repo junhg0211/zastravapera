@@ -52,21 +52,24 @@ class UtilityCog(Cog):
                     # but don't know why
                     if '사트' not in jwiki.get_categories(change['title']):
                         continue
-                except TypeError as e:
-                    print(e)
+                except TypeError:
+                    print(f'No category (utility.py line >= 56), {change=}')
                 else:
                     # merge duplicated changes
                     parsed = parse.parse_qs(parse.urlsplit(change['link']).query)
-                    title = parsed['title'][0]
-                    diff = int(parsed['diff'][0])
-                    oldid = int(parsed['oldid'][0])
-                    if title in result:
-                        original_oldid = int(result[title][0])
-                        original_diff = int(result[title][1])
-                        result[title][0] = min(original_oldid, oldid)
-                        result[title][1] = max(original_diff, diff)
+                    if 'title' in parsed:
+                        title = parsed['title'][0]
+                        diff = int(parsed['diff'][0])
+                        oldid = int(parsed['oldid'][0])
+                        if title in result:
+                            original_oldid = int(result[title][0])
+                            original_diff = int(result[title][1])
+                            result[title][0] = min(original_oldid, oldid)
+                            result[title][1] = max(original_diff, diff)
+                        else:
+                            result[title] = [oldid, diff, change['dc:creator']]
                     else:
-                        result[title] = [oldid, diff, change['dc:creator']]
+                        print(f'No title in change (utility.py line >= 72), {change=}')
 
         if result:
             embed = Embed(
