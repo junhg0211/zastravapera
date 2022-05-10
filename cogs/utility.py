@@ -83,10 +83,6 @@ class UtilityCog(Cog):
                           f'title={title.replace(" ",  "_")}&oldid={oldid}&diff={diff})함.'
                 )
             await send(embed=embed)
-        else:
-            await send(
-                f'최근에 변경된 문서가 없습니다. 제이위키 `[[분류:사트]]` 문서에 변경 사항이 발생되면 알려드리겠습니다.',
-                delete_after=RECENT_CHANGE_DURATION / 2)
 
         self.last_recent_changes = datetime.now()
 
