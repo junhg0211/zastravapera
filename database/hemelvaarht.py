@@ -6,7 +6,7 @@ from database import Word
 class ThravelemehWord(Word):
     back_slice = 2
 
-    def __init__(self, word: str, noun: str = '', verb: str = '', adj: str = '', adv: str = '', conj: str = '',
+    def __init__(self, word: str, noun: str = '', verb: str = '', adj: str = '', adv: str = '', conj: str = '', postpos: str= '',
                  remark: str = '', cont: str = '', origin_language: str = '', origin: str = ''):
         super().__init__(word)
         self.noun = noun
@@ -14,6 +14,7 @@ class ThravelemehWord(Word):
         self.adj = adj
         self.adv = adv
         self.conj = conj
+        self.postpos = postpos
         self.remark = remark
         self.cont = cont
         self.origin_language = origin_language
@@ -40,6 +41,8 @@ class ThravelemehWord(Word):
             definitions.append(f'[부] {self.adv}')
         if self.conj:
             definitions.append(f'[접] {self.conj}')
+        if self.postpos:
+            definitions.append(f'[조] {self.postpos}')
         if self.remark:
             definitions.append(f'비고: {self.remark}')
         return '\n'.join(definitions)
