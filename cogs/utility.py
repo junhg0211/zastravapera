@@ -333,7 +333,7 @@ class UtilityCog(Cog):
             )
         ]
     )
-    async def inzacalen(self, ctx: SlashContext, year: int, month: int = 0, day: int = 0):
+    async def inzacalen(self, ctx: SlashContext, year: int, month: int = 1, day: int = 1):
         sat_datetime = SatDatetime(year, month, day)
         christian_era = sat_datetime.to_datetime()
         await ctx.send(f'> 자소크력 {year}년 {month}월 {day}일(ASN)은\n'
