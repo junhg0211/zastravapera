@@ -307,9 +307,40 @@ class UtilityCog(Cog):
             second if second else now.second
         )
         sat_datetime = SatDatetime.get_from_datetime(now)
-        await ctx.send(f'> 서력 {now.year}년 {now.month}월 {now.day}일 {now.hour}시 {now.minute}분 {now.second}초는\n'
+        await ctx.send(f'> 서력 {now.year}년 {now.month}월 {now.day}일 {now.hour}시 {now.minute}분 {now.second}초 (UTC)는\n'
                        f'> 자소크력은 __{sat_datetime.year}년 {sat_datetime.month}월 {sat_datetime.day}일 '
-                       f'{sat_datetime.hour}시 {sat_datetime.minute}분 {sat_datetime.second:.1f}초__ 입니다.')
+                       f'{sat_datetime.hour}시 {sat_datetime.minute}분 {sat_datetime.second:.1f}초 (ASN)__ 입니다.')
+
+    @cog_ext.cog_slash(
+        description='자소크력으로 서력 일자를 계산합니다.',
+        guild_ids=guild_ids,
+        options=[
+            create_option(
+                name='year',
+                description='자소크력 년',
+                option_type=SlashCommandOptionType.INTEGER,
+                required=True
+            ),
+            create_option(
+                name='month',
+                description='자소크력 월',
+                option_type=SlashCommandOptionType.INTEGER,
+                required=False
+            ),
+            create_option(
+                name='day',
+                description='자소크력 일',
+                option_type=SlashCommandOptionType.INTEGER,
+                required=False
+            )
+        ]
+    )
+    async def inzacalen(self, ctx: SlashContext, year: int, month: int = 0, day: int = 0):
+        sat_datetime = SatDatetime(year, month, day)
+        christian_era = sat_datetime.to_datetime()
+        await ctx.send(f'> 자소크력 {year}년 {month}월 {day}일(ASN)은\n'
+                       f'> 서력 __{christian_era.year}년 {christian_era.month}월 {christian_era.day}일 {christian_era.hour}시 '
+                       f'{christian_era.minute}분 {christian_era.second:.1f}초 (UTC)__입니다.')
 
     @cog_ext.cog_slash(
         description='제이위키 문서릅 검색합니다.',
