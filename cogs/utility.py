@@ -54,7 +54,7 @@ class UtilityCog(Cog):
                     if '사트' not in jwiki.get_categories(change['title']):
                         continue
                 except TypeError:
-                    print(f'No category (utility.py line >= 56), {change=}')
+                    pass
                 else:
                     # merge duplicated changes
                     parsed = parse.parse_qs(parse.urlsplit(change['link']).query)
@@ -69,8 +69,6 @@ class UtilityCog(Cog):
                             result[title][1] = max(original_diff, diff)
                         else:
                             result[title] = [oldid, diff, change['dc:creator']]
-                    else:
-                        print(f'No title in change (utility.py line >= 72), {change=}')
 
         if result:
             embed = Embed(
