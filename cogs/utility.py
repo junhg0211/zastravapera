@@ -1,4 +1,4 @@
-from asyncio import sleep
+from asyncio import sleep, wait
 from datetime import datetime, timedelta
 from random import choice, randint
 from typing import Optional, Dict, List
@@ -372,6 +372,43 @@ class UtilityCog(Cog):
                 value=f'[보러 가기](https://jwiki.kr/wiki/index.php/{result["title"].replace(" ", "_")})',
                 inline=False)
         await ctx.send(embed=embed)
+
+    @cog_ext.cog_slash(
+        description='여론조사를 실시합니다.',
+        guild_ids=guild_ids,
+        options=[
+            create_option(
+                name='title',
+                description='여론조사 제목을 입력합니다.',
+                option_type=SlashCommandOptionType.STRING,
+                required=True
+            ),
+            create_option(
+                name='content',
+                description='여론조사 내용을 입력합니다.',
+                option_type=SlashCommandOptionType.STRING,
+                required=True
+            ),
+            create_option(
+                name='answer_count',
+                description='여론조사 정답의 개수를 입력합니다.',
+                option_type=SlashCommandOptionType.INTEGER,
+                required=True
+            )
+        ]
+    )
+    async def poll(self, ctx: SlashContext, title: str, content: str, answer_count: int):
+        if answer_count < 2:
+            await ctx.send('정답의 개수는 2개 이상이어야 합니다.')
+            return
+        elif answer_count > 20:
+            await ctx.send('정답의 개수는 20개 이하이어야 합니다.')
+            return
+
+        message = await ctx.send(f'**{title}**\n> {content}')
+        for i in range(answer_count):
+            await message.add_reaction(chr(ord('🇦') + i))
+            await sleep(0)
 
 
 def setup(bot: Bot):
