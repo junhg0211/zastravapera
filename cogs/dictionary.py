@@ -20,7 +20,7 @@ databases = {
     'berquam': Database(BerquamWord, 'zasokese_database', 1),
     'simetasispika': DialectDatabase(ZasokeseWord, 'zasokese_database', zasokese_to_simetasise),
     'felinkia': Database(FelinkiaWord, 'felinkia_database'),
-    '4351': Database(SesameWord, '4351_database', 1),
+    '4351': Database(SesameWord, '4351_database', 0),
     'semal': PosDatabase('semal_database'),
     'xei': PosDatabase('xei_database', 0, 0, 2, 3),
 }
