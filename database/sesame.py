@@ -26,5 +26,5 @@ class SesameWord(Word):
         if self.property:
             definitions.append(f'[속성] {self.property}')
         if self.etc:
-            definitions.append(f'[기타] {self.etc}')
+            definitions.append(f'[대상] {self.etc}')
         return '\n'.join(definitions)
