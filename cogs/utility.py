@@ -92,7 +92,7 @@ class UtilityCog(Cog):
             return
 
         while self.main_channel is None:
-            self.main_channel = self.bot.get_channel(get_const('main_channel_id'))
+            self.main_channel = self.bot.get_channel(get_const('changes_channel_id'))
             await sleep(1)
 
         await self.recent_changes(None, self.main_channel)
