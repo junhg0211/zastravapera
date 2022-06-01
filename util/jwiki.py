@@ -34,4 +34,7 @@ def get_recent_changes(*, from_: Optional[datetime] = None):
         time = from_.astimezone(utc).strftime('%Y-%m-%d %H:%M:%S')
         url += f'&from={time}'
     r = requests.get(url)
-    return xmltodict.parse(r.text)
+    try:
+        return xmltodict.parse(r.text)
+    except xmltodict.expat.ExpatError:
+        return dict()
