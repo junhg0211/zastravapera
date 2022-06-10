@@ -29,10 +29,8 @@ class UtilityCog(Cog):
 
         self.last_recent_changes = datetime.now()
 
-        self.track_recent_changes.start()
-
     def cog_unload(self):
-        self.track_recent_changes.cancel()
+        pass
 
     # noinspection PyTypeChecker
     async def recent_changes(self, ctx: Optional[SlashContext], channel: TextChannel):
