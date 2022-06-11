@@ -2,7 +2,7 @@ from database import Word
 
 
 class SesameWord(Word):
-    def __init__(self, word: str, pronunciation: str, origin: str, object_: str, action: str, property_: str, etc: str,
+    def __init__(self, word: str, pronunciation: str, origin: str, object_: str, action: str, property_: str, target: str,
                  *notes: str):
         super().__init__(word)
         self.pronunciation = pronunciation
@@ -10,7 +10,7 @@ class SesameWord(Word):
         self.object = object_
         self.action = action
         self.property = property_
-        self.etc = etc
+        self.target = target
         self.notes = notes
 
     def get_field_name(self, special: bool) -> str:
@@ -25,6 +25,6 @@ class SesameWord(Word):
             definitions.append(f'[동작] {self.action}')
         if self.property:
             definitions.append(f'[속성] {self.property}')
-        if self.etc:
-            definitions.append(f'[대상] {self.etc}')
+        if self.target:
+            definitions.append(f'[대상] {self.target}')
         return '\n'.join(definitions)
