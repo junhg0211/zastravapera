@@ -1,5 +1,5 @@
 from database import Word
-#이렘나어	발음	기본형 품사	기본형의 의미	변형어1	변형어1-발음	변형어1-품사	변형어1-의미	변형어2	변형어2-발음	변형어2-품사	변형어2-의미	변형어3
+
 
 class IremnaWord(Word):
     def __init__(self, word: str, pronunciation: str, pos: str, meaning: str,
