@@ -3,8 +3,8 @@ from database import Word
 
 class IremnaWord(Word):
     def __init__(self, word: str, pronunciation: str, pos: str, meaning: str,
-                 word2: str, pos2: str, pronunciation2: str, meaning2: str, 
-                 word3: str, pos3: str, pronunciation3: str, meaning3: str, 
+                 word2: str, pronunciation2: str, pos2: str, meaning2: str, 
+                 word3: str, pronunciation3: str, pos3: str, meaning3: str, 
                  word4: str, *notes: str):
         super().__init__(word)
         self.pronunciation = pronunciation
@@ -12,13 +12,13 @@ class IremnaWord(Word):
         self.meaning = meaning
         
         self.word2 = word2
-        self.pos2 = pos2
         self.pronounciation2 = pronounciation2
+        self.pos2 = pos2
         self.meaning2 = meaning2
         
         self.word3 = word3
-        self.pos3 = pos3
         self.pronounciation3 = pronounciation3
+        self.pos3 = pos3
         self.meaning3 = meaning3
         
         self.word4 = word4
