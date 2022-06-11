@@ -18,4 +18,4 @@
 
 ### 사전
 
-[자소크어 (/zasok)](https://jwiki.kr/wiki/index.php/%EC%9E%90%EC%86%8C%ED%81%AC%EC%96%B4), [트라벨레메 (/th)](https://jwiki.kr/wiki/index.php/%ED%8A%B8%EB%9D%BC%EB%B2%A8%EB%A0%88%EB%A9%94), [베르쿠암 (/berquam)](https://jwiki.kr/wiki/index.php/%EB%B2%A0%EB%A5%B4%EC%BF%A0%EC%95%94)의 사전을 제공합니다.
+[자소크어 (/zasok)](http://wiki.shtelo.org/index.php/자소크어), [트라벨레메 (/th)](http://wiki.shtelo.org/index.php/트라벨레메), [베르쿠암 (/berquam)](http://wiki.shtelo.org/index.php/베르쿠암), [이렘나어 (/iremna)](http://wiki.shtelo.org/index.php/이렘나어)의 사전을 제공합니다.
