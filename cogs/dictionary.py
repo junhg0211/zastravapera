@@ -11,6 +11,7 @@ from database.felinkia import FelinkiaWord
 from database.hemelvaarht import ThravelemehWord
 from database.sesame import SesameWord
 from database.zasok import ZasokeseWord, BerquamWord
+from database.iremna import IremnaWord
 from util import get_programwide
 from util.simetasis import zasokese_to_simetasise
 
@@ -23,6 +24,7 @@ databases = {
     '4351': Database(SesameWord, '4351_database', 0),
     'semal': PosDatabase('semal_database'),
     'xei': PosDatabase('xei_database', 0, 0, 2, 3),
+    'iremna': PosDatabase('iremna_database', 0),
 }
 
 guild_ids = get_programwide('guild_ids')
@@ -218,6 +220,26 @@ class DictionaryCog(Cog):
             title=f'`{query}`의 검색 결과',
             description='헤이어 단어를 검색합니다.',
             color=get_const('xei_color')
+        ), query)
+
+    @cog_ext.cog_slash(
+        name='iremna',
+        description='이렘나어 단어를 검색합니다.',
+        guild_ids=guild_ids,
+        options=[
+            create_option(
+                name='query',
+                description='검색할 단어',
+                required=True,
+                option_type=SlashCommandOptionType.STRING
+            )
+        ]
+    )
+    async def iremna(self, ctx: SlashContext, query: str):
+        await handle_dictionary(ctx, databases['iremna'], Embed(
+            title=f'`{query}`의 검색 결과',
+            description='이렘나어 단어를 검색합니다.',
+            color=get_const('iremna_color')
         ), query)
 
     @cog_ext.cog_slash(
