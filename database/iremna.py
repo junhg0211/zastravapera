@@ -1,15 +1,13 @@
-from database import Word
+from database import PosWord
 
 
-class IremnaWord(Word):
+class IremnaWord(PosWord):
     def __init__(self, word: str, pronunciation: str, pos: str, meaning: str,
                  word2: str, pronunciation2: str, pos2: str, meaning2: str, 
                  word3: str, pronunciation3: str, pos3: str, meaning3: str, 
                  word4: str, *notes: str):
-        super().__init__(word)
+        super().__init__(word, pos, meaning)
         self.pronunciation = pronunciation
-        self.pos = pos
-        self.meaning = meaning
         
         self.word2 = word2
         self.pronunciation2 = pronunciation2
@@ -24,17 +22,12 @@ class IremnaWord(Word):
         self.word4 = word4
         self.notes = notes
 
-    def get_field_name(self, special: bool) -> str:
-        return f'**{self.word}**' + (f' [{self.pronunciation}]' if self.pronunciation else '') if not special \
-            else f'__**{self.word}**' + (f' [{self.pronunciation}]' if self.pronunciation else '') + ' (일치)__'
-
     def get_field_value(self) -> str:
         definitions = list()
-        definitions.append(f'<{self.pos}> {self.meaning}')
-        definitions.append(f'→ <{self.pos2}> **{self.word2}** [{self.pronunciation2}] {self.meaning2}')
-        definitions.append(f'→ <{self.pos3}> **{self.word3}** [{self.pronunciation3}] {self.meaning3}')
+        definitions.append(f'[{self.pos}] {self.meaning}')
+        definitions.append(f'→ [{self.pos2}] **{self.word2}** [{self.pronunciation2}] {self.meaning2}')
+        definitions.append(f'→ [{self.pos3}] **{self.word3}** [{self.pronunciation3}] {self.meaning3}')
         return '\n'.join(definitions)
-    
         """
         if self.meaning:
             line = ''
