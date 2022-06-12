@@ -9,7 +9,7 @@ class IremnaWord(Word):
         self.cells = cells
 
     def sliding_window(self):
-        cells = copy(self.cells)
+        cells = list(copy(self.cells))
         while cells:
             result, cells = cells[:4], cells[4:]
             while len(result) < 4:
