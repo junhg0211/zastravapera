@@ -1,13 +1,15 @@
-from database import PosWord
+from database import Word
 
 
-class IremnaWord(PosWord):
+class IremnaWord(Word):
     def __init__(self, word: str, pronunciation: str, pos: str, meaning: str,
                  word2: str, pronunciation2: str, pos2: str, meaning2: str, 
                  word3: str, pronunciation3: str, pos3: str, meaning3: str, 
                  word4: str, *notes: str):
-        super().__init__(word, pos, meaning)
+        super().__init__(word)
         self.pronunciation = pronunciation
+        self.pos = pos
+        self.meaning = meaning
         
         self.word2 = word2
         self.pronunciation2 = pronunciation2
