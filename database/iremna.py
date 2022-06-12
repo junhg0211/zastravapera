@@ -30,6 +30,12 @@ class IremnaWord(Word):
 
     def get_field_value(self) -> str:
         definitions = list()
+        definitions.append(f'<{self.pos}> {self.meaning}')
+        definitions.append(f'→ <{self.pos2}> **{self.word2}** [{self.pronunciation2}] {self.meaning2}')
+        definitions.append(f'→ <{self.pos3}> **{self.word3}** [{self.pronunciation3}] {self.meaning3}')
+        return '\n'.join(definitions)
+    
+        """
         if self.meaning:
             line = ''
             if self.pos:
@@ -56,4 +62,4 @@ class IremnaWord(Word):
             if self.meaning3:
                 line += ' ― ' + self.meaning3
             definitions.append(line)
-        return '\n'.join(definitions)
+        """
