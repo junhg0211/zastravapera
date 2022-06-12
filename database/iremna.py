@@ -20,6 +20,8 @@ class IremnaWord(Word):
         definitions = list()
         for i, window in enumerate(self.sliding_window()):
             word, pronunciation, pos, meaning = window
+            if not word:
+                break
             line = '→ ' if i else ''
             if pos:
                 line += f'<{pos}> '
