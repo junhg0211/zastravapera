@@ -24,7 +24,7 @@ databases = {
     '4351': Database(SesameWord, '4351_database', 0),
     'semal': PosDatabase('semal_database'),
     'xei': PosDatabase('xei_database', 0, 0, 2, 3),
-    'iremna': PosDatabase('iremna_database', 0, 2, 3),
+    'iremna': Database(IremnaWord, 'iremna_database', 0),
 }
 
 guild_ids = get_programwide('guild_ids')
