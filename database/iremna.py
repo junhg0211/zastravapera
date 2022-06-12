@@ -12,12 +12,12 @@ class IremnaWord(Word):
         self.meaning = meaning
         
         self.word2 = word2
-        self.pronounciation2 = pronounciation2
+        self.pronunciation2 = pronunciation2
         self.pos2 = pos2
         self.meaning2 = meaning2
         
         self.word3 = word3
-        self.pronounciation3 = pronounciation3
+        self.pronunciation3 = pronunciation3
         self.pos3 = pos3
         self.meaning3 = meaning3
         
@@ -25,8 +25,8 @@ class IremnaWord(Word):
         self.notes = notes
 
     def get_field_name(self, special: bool) -> str:
-        return f'**{self.word}**' + (f' [{self.pronounciation}]' if self.pronounciation else '') if not special \
-            else f'__**{self.word}**' + (f' [{self.pronounciation}]' if self.pronounciation else '') + ' (일치)__'
+        return f'**{self.word}**' + (f' [{self.pronunciation}]' if self.pronunciation else '') if not special \
+            else f'__**{self.word}**' + (f' [{self.pronunciation}]' if self.pronunciation else '') + ' (일치)__'
 
     def get_field_value(self) -> str:
         definitions = list()
@@ -34,15 +34,15 @@ class IremnaWord(Word):
             line = ''
             if self.pos:
                 line += '<' + self.pos + '> '
-            line += meaning
+            line += self.meaning
             definitions.append(line)
         if self.word2:
             line = '→ '
             if self.pos2:
                 line += '<' + self.pos2 + '> '
             line += '**' + self.word2 + '**'
-            if self.pronounciation2:
-                line += ' [' + self.pronounciation2 + ']'
+            if self.pronunciation2:
+                line += ' [' + self.pronunciation2 + ']'
             if self.meaning2:
                 line += ' ― ' + self.meaning2
             definitions.append(line)
@@ -51,8 +51,8 @@ class IremnaWord(Word):
             if self.pos3:
                 line += '<' + self.pos3 + '> '
             line += '**' + self.word3 + '**'
-            if self.pronounciation3:
-                line += ' [' + self.pronounciation3 + ']'
+            if self.pronunciation3:
+                line += ' [' + self.pronunciation3 + ']'
             if self.meaning3:
                 line += ' ― ' + self.meaning3
             definitions.append(line)
