@@ -54,7 +54,7 @@ class Database:
         self.last_reload = datetime.now()
         return self
 
-    def add_row(self, *values):
+    def add_row(self, values):
         self.sheet.insert_row(values, index=2)
         self.reload()
 
