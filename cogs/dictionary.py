@@ -1,4 +1,4 @@
-from asyncio import sleep
+from asyncio import sleep, TimeoutError as AsyncTimeoutError
 
 from discord import Embed
 from discord.ext.commands import Cog, Bot
@@ -9,9 +9,9 @@ from const import get_const
 from database import Database, DialectDatabase, PosDatabase
 from database.felinkia import FelinkiaWord
 from database.hemelvaarht import ThravelemehWord
+from database.iremna import IremnaWord
 from database.sesame import SesameWord
 from database.zasok import ZasokeseWord, BerquamWord
-from database.iremna import IremnaWord
 from util import get_programwide
 from util.simetasis import zasokese_to_simetasise
 
@@ -85,6 +85,60 @@ class DictionaryCog(Cog):
             description='자소크어 단어를 검색합니다.',
             color=get_const('shtelo_sch_vanilla')
         ), query)
+
+    @cog_ext.cog_slash(
+        description='자소크어 단어를 만듭니다.',
+        guild_ids=guild_ids,
+        options=[
+            create_option('word', '만들 단어', SlashCommandOptionType.STRING, True),
+            create_option('noun', '명사 의미', SlashCommandOptionType.STRING, False),
+            create_option('adjective', '형용사 의미', SlashCommandOptionType.STRING, False),
+            create_option('verb', '동사 의미', SlashCommandOptionType.STRING, False),
+            create_option('adverb', '부사 의미', SlashCommandOptionType.STRING, False),
+            create_option('postposition', '조사 의미', SlashCommandOptionType.STRING, False),
+            create_option('note', '비고', SlashCommandOptionType.STRING, False),
+            create_option('origin_language', '어원 언어', SlashCommandOptionType.STRING, True),
+            create_option('origin_word', '어원', SlashCommandOptionType.STRING, False),
+        ]
+    )
+    async def zasok_create(self, ctx: SlashContext, word: str = '', noun: str = '', adjective: str = '', verb: str = '',
+                           adverb: str = '', postposition: str = '', note: str = '',
+                           origin_language: str = '', origin_word: str = ''):
+        embed = Embed(title=f'자소크어 `{word}` 단어 추가', description='자소크어 단어를 추가했습니다.',
+                      color=get_const('shtelo_sch_vanilla'))
+        embed.add_field(name='단어', value=word)
+        if noun:
+            embed.add_field(name='명사 의미', value=noun)
+        if adjective:
+            embed.add_field(name='형용사 의미', value=adjective)
+        if verb:
+            embed.add_field(name='동사 의미', value=verb)
+        if adverb:
+            embed.add_field(name='부사 의미', value=adverb)
+        if postposition:
+            embed.add_field(name='조사 의미', value=postposition)
+        if note:
+            embed.add_field(name='비고', value=note)
+        if origin_language:
+            embed.add_field(name='어원 언어', value=origin_language)
+        if origin_word:
+            embed.add_field(name='어원', value=origin_word)
+
+        confirm = await ctx.send('추가하시겠습니까? (10초동안 대기)', embed=embed)
+        await confirm.add_reaction('✅')
+
+        def check(reaction, user):
+            return user == ctx.author and str(reaction.emoji) == '✅'
+        try:
+            await self.bot.wait_for('reaction_add', timeout=10, check=check)
+        except AsyncTimeoutError:
+            await confirm.remove_reaction('✅', self.bot.user)
+            await confirm.edit(content='추가를 취소했습니다.')
+            return
+
+        databases['zasokese'] \
+            .add_row([word, noun, adjective, verb, adverb, postposition, note, origin_language, origin_word])
+        await confirm.edit(content='단어를 추가했습니다.')
 
     @cog_ext.cog_slash(
         description='트라벨레메 단어를 검색합니다.',
