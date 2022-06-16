@@ -55,7 +55,7 @@ class Database:
         return self
 
     def add_row(self, *values):
-        self.sheet.insert_row(values, index=1, table_range='A1:I1')
+        self.sheet.insert_row(values, index=2)
         self.reload()
 
     def search_rows(self, query: str) -> Tuple[List[Word], set, bool]:
