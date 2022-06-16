@@ -55,7 +55,7 @@ class Database:
         return self
 
     def add_row(self, *values):
-        self.sheet.append_row(values, table_range='A1:I1')
+        self.sheet.insert_row(values, index=1, table_range='A1:I1')
         self.reload()
 
     def search_rows(self, query: str) -> Tuple[List[Word], set, bool]:
@@ -149,4 +149,4 @@ if __name__ == '__main__':
     from database.zasok import ZasokeseWord
 
     zasokese_database = Database(ZasokeseWord, 'zasokese_database')
-    zasokese_database.sheet.append_row(['1', '2', '3', '4', '5', '6', '7', '8', '9'], table_range='A2:I2')
+    zasokese_database.sheet.insert_row(['ariva', '으악', '', '', '', '', '', '선험', ''], index=2)
