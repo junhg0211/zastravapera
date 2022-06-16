@@ -101,9 +101,9 @@ class DictionaryCog(Cog):
             create_option('note', '비고', SlashCommandOptionType.STRING, False),
         ]
     )
-    async def zasok_create(self, ctx: SlashContext, word: str = '', noun: str = '', adjective: str = '', verb: str = '',
-                           adverb: str = '', postposition: str = '', note: str = '',
-                           origin_language: str = '', origin_word: str = ''):
+    async def zasok_create(self, ctx: SlashContext, word: str = '', origin_language: str = '', origin_word: str = '',
+                           noun: str = '', adjective: str = '', verb: str = '', adverb: str = '',
+                           postposition: str = '', note: str = ''):
         embed = Embed(title=f'자소크어 `{word}` 단어 추가', description='자소크어 단어를 추가했습니다.',
                       color=get_const('shtelo_sch_vanilla'))
         embed.add_field(name='단어', value=word)
