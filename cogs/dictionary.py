@@ -91,14 +91,14 @@ class DictionaryCog(Cog):
         guild_ids=guild_ids,
         options=[
             create_option('word', '만들 단어', SlashCommandOptionType.STRING, True),
+            create_option('origin_language', '어원 언어', SlashCommandOptionType.STRING, True),
+            create_option('origin_word', '어원', SlashCommandOptionType.STRING, False),
             create_option('noun', '명사 의미', SlashCommandOptionType.STRING, False),
             create_option('adjective', '형용사 의미', SlashCommandOptionType.STRING, False),
             create_option('verb', '동사 의미', SlashCommandOptionType.STRING, False),
             create_option('adverb', '부사 의미', SlashCommandOptionType.STRING, False),
             create_option('postposition', '조사 의미', SlashCommandOptionType.STRING, False),
             create_option('note', '비고', SlashCommandOptionType.STRING, False),
-            create_option('origin_language', '어원 언어', SlashCommandOptionType.STRING, True),
-            create_option('origin_word', '어원', SlashCommandOptionType.STRING, False),
         ]
     )
     async def zasok_create(self, ctx: SlashContext, word: str = '', noun: str = '', adjective: str = '', verb: str = '',
