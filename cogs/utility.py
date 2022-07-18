@@ -339,7 +339,7 @@ class UtilityCog(Cog):
                        f'{christian_era.minute}분 {christian_era.second:.1f}초 (UTC)__입니다.')
 
     @cog_ext.cog_slash(
-        description='제이위키 문서릅 검색합니다.',
+        description='광부위키 문서릅 검색합니다.',
         guild_ids=guild_ids,
         options=[
             create_option(
@@ -350,24 +350,24 @@ class UtilityCog(Cog):
             )
         ]
     )
-    async def jwiki(self, ctx: SlashContext, query: str):
-        response = requests.get(f'https://jwiki.kr/wiki/api.php?action=query&list=search&srsearch={query}&format=json')
+    async def gwangbu(self, ctx: SlashContext, query: str):
+        response = requests.get(f'http://wiki.shtelo.org/api.php?action=query&list=search&srsearch={query}&format=json')
         if response.status_code != 200:
-            await ctx.send('제이위키 문서 검색에 실패했습니다.')
+            await ctx.send('광부위키 문서 검색에 실패했습니다.')
             return
         data = response.json()
         if 'query' not in data or 'search' not in data['query']:
-            await ctx.send('제이위키 문서 검색에 실패했습니다.')
+            await ctx.send('광부위키 문서 검색에 실패했습니다.')
             return
         if not data['query']['search']:
             await ctx.send('검색 결과가 없습니다.')
             return
 
-        embed = Embed(title=f'`{query}` 제이위키 문서 검색 결과', color=get_const('jwiki_color'))
+        embed = Embed(title=f'`{query}` 광부위키 문서 검색 결과', color=get_const('sat_color'))
         for result in data['query']['search'][:25]:
             embed.add_field(
                 name=result['title'],
-                value=f'[보러 가기](https://jwiki.kr/wiki/index.php/{result["title"].replace(" ", "_")})',
+                value=f'[보러 가기](http://wiki.shtelo.org/index.php/{result["title"].replace(" ", "_")})',
                 inline=False)
         await ctx.send(embed=embed)
 
