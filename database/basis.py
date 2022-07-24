@@ -37,7 +37,7 @@ class Database:
     @staticmethod
     def is_duplicate(query: str, row: list) -> bool:
         return normalise(query) == normalise(row[0]) \
-                   or any(normalise(query) in re.split(r'[,;] ', normalise(row[i])) for i in range(1, len(row)))
+               or any(normalise(query) in re.split(r'[,;] ', normalise(row[i])) for i in range(1, len(row)))
 
     def __init__(self, word_class: Type[Word], spreadsheet_key: str, sheet_number: int = 0):
         self.word_class = word_class
@@ -125,7 +125,13 @@ class PosDatabase(Database):
 
     def is_duplicate(self, query: str, row: list) -> bool:
         return normalise(query) == row[self.word_column] \
-            or normalise(query) in re.split(r'[,;] ', normalise(row[self.meaning_column]))
+               or normalise(query) in re.split(r'[,;] ', normalise(row[self.meaning_column]))
+
+    def row_appending(self, rows_list, row):
+        # noinspection PyArgumentList
+        rows_list.append(self.word_class(
+            row[self.word_column], row[self.pos_column], row[self.meaning_column],
+            '' if self.note_column == -1 else row[self.note_column]))
 
     def search_rows(self, query: str) -> Tuple[List[Word], set, bool]:
         reloaded = False
@@ -138,8 +144,7 @@ class PosDatabase(Database):
             if normalise(query) in normalise(row[self.word_column]) \
                     or normalise(query) in normalise(row[self.meaning_column]):
                 # noinspection PyArgumentList
-                rows.append(self.word_class(row[self.word_column], row[self.pos_column], row[self.meaning_column],
-                                            '' if self.note_column == -1 else row[self.note_column]))
+                self.row_appending(rows, row)
             if self.is_duplicate(query, row):
                 duplicates.add(len(rows) - 1)
         return rows, duplicates, reloaded

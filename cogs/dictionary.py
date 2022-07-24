@@ -8,6 +8,7 @@ from discord_slash.utils.manage_commands import create_option
 from const import get_const
 from database import Database, DialectDatabase, PosDatabase
 from database.arteut import ArteutWord
+from database.enjie import EnjieDatabase
 from database.felinkia import FelinkiaWord
 from database.hemelvaarht import ThravelemehWord
 from database.iremna import IremnaWord
@@ -26,7 +27,8 @@ databases = {
     'semal': PosDatabase('semal_database'),
     'xei': PosDatabase('xei_database', 0, 0, 2, 3),
     'iremna': Database(IremnaWord, 'iremna_database', 0),
-    'arteut': Database(ArteutWord, 'arteut_database', 0)
+    'arteut': Database(ArteutWord, 'arteut_database', 0),
+    'enjie': EnjieDatabase('enjie_database')
 }
 
 guild_ids = get_programwide('guild_ids')
@@ -315,6 +317,25 @@ class DictionaryCog(Cog):
             title=f'`{query}`의 검색 결과',
             description='아르토이트어 단어를 검색합니다.',
             color=get_const('arteut_color')
+        ), query)
+
+    @cog_ext.cog_slash(
+        description='연서어 단어를 검색합니다.',
+        guild_ids=guild_ids,
+        options=[
+            create_option(
+                name='query',
+                description='검색할 단어',
+                required=True,
+                option_type=SlashCommandOptionType.STRING
+            )
+        ]
+    )
+    async def enjie(self, ctx: SlashContext, query: str):
+        await handle_dictionary(ctx, databases['enjie'], Embed(
+            title=f'`{query}`의 검색 결과',
+            description='연서어 단어를 검색합니다.',
+            color=get_const('enjie_color')
         ), query)
 
     @cog_ext.cog_slash(
