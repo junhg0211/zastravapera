@@ -84,6 +84,13 @@ class DictionaryCog(Cog):
         ]
     )
     async def zasok(self, ctx: SlashContext, query: str):
+        if any(query.startswith(prefix) for prefix in ('mò', 'mà', 'nò', 'nà', 'hò', 'hà', 'sò', 'sà')):
+            query = query[2:]
+        for character in 'àèìòù':
+            if character in query:
+                index = query.index(character)
+                query = query[:index]
+
         await handle_dictionary(ctx, databases['zasokese'], Embed(
             title=f'`{query}`의 검색 결과',
             description='자소크어 단어를 검색합니다.',
