@@ -421,21 +421,27 @@ class UtilityCog(Cog):
         ]
     )
     async def korean(self, ctx: SlashContext, query: str):
-        message = await ctx.send('표준국어대사전에서 단어를 검색하는 중입니다…')
+        message = await ctx.send(f'표준국어대사전에서 `{query}` 단어를 검색하는 중입니다…')
 
         r = requests.get('https://stdict.korean.go.kr/api/search.do',
                          params={'key': get_secret('korean_dictionary_api_key'), 'q': query, 'req_type': 'json'},
                          verify=False)
-        j = r.json()
-        words = j['channel']['item']
+        try:
+            j = r.json()
+        except requests.exceptions.JSONDecodeError:
+            await message.edit(content=f'`{query}`의 검색결과가 없습니다.')
+            return
+        else:
+            words = j['channel']['item']
 
-        embed = Embed(title=f'`{query}` 한국어 사전 검색 결과', color=get_const('korean_color'),
-                      description='출처: 국립국어원 표준국어대사전')
-        for word in words:
-            embed.add_field(name=f"**{word['word']}** ({word['pos']})",
-                            value=word['sense']['definition'] + f' [자세히 보기]({word["sense"]["link"]})', inline=False)
+            embed = Embed(title=f'`{query}` 한국어 사전 검색 결과', color=get_const('korean_color'),
+                          description='출처: 국립국어원 표준국어대사전')
+            for word in words:
+                embed.add_field(name=f"**{word['word']}** ({word['pos']})",
+                                value=word['sense']['definition'] + f' [자세히 보기]({word["sense"]["link"]})',
+                                inline=False)
 
-        await message.edit(content=None, embed=embed)
+            await message.edit(content=None, embed=embed)
 
 
 def setup(bot: Bot):
