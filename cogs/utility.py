@@ -1,4 +1,4 @@
-from asyncio import sleep, wait
+from asyncio import sleep
 from datetime import datetime, timedelta
 from random import choice, randint
 from typing import Optional, Dict, List
@@ -12,7 +12,7 @@ from discord_slash import cog_ext, SlashContext, SlashCommandOptionType
 from discord_slash.utils.manage_commands import create_option
 from sat_datetime import SatDatetime
 
-from const import get_const
+from const import get_const, get_secret
 from util import get_programwide, jwiki
 from util.thravelemeh import WordGenerator
 
@@ -76,7 +76,7 @@ class UtilityCog(Cog):
                 embed.add_field(
                     name=title.replace('_', ' '),
                     value=f'`{creator}`님이 마지막으로 [수정](https://jwiki.kr/wiki/index.php?'
-                          f'title={title.replace(" ",  "_")}&oldid={oldid}&diff={diff})함.'
+                          f'title={title.replace(" ", "_")}&oldid={oldid}&diff={diff})함.'
                 )
             await send(embed=embed)
 
@@ -407,6 +407,35 @@ class UtilityCog(Cog):
         for i in range(answer_count):
             await message.add_reaction(chr(ord('🇦') + i))
             await sleep(0)
+
+    @cog_ext.cog_slash(
+        description='한국어 단어를 검색합니다.',
+        guild_ids=guild_ids,
+        options=[
+            create_option(
+                name='query',
+                description='검색어를 입력합니다.',
+                option_type=SlashCommandOptionType.STRING,
+                required=True
+            )
+        ]
+    )
+    async def korean(self, ctx: SlashContext, query: str):
+        message = await ctx.send('표준국어대사전에서 단어를 검색하는 중입니다…')
+
+        r = requests.get('https://stdict.korean.go.kr/api/search.do',
+                         params={'key': get_secret('korean_dictionary_api_key'), 'q': query, 'req_type': 'json'},
+                         verify=False)
+        j = r.json()
+        words = j['channel']['item']
+
+        embed = Embed(title=f'`{query}` 한국어 사전 검색 결과', color=get_const('korean_color'),
+                      description='출처: 국립국어원 표준국어대사전')
+        for word in words:
+            embed.add_field(name=f"**{word['word']}** ({word['pos']})",
+                            value=word['sense']['definition'] + f' [자세히 보기]({word["sense"]["link"]})', inline=False)
+
+        await message.edit(content=None, embed=embed)
 
 
 def setup(bot: Bot):
