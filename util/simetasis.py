@@ -7,6 +7,9 @@ def zasokese_to_simetasise(sentence: str) -> str:
     result = ''
     words = sentence.split(' ')
     for word in words:
+        if not word:
+            continue
+
         punctuation = ''
         while word[-1] in '.,;:?!\"\']':
             punctuation = word[-1] + punctuation
