@@ -1,6 +1,6 @@
 discord~=1.7.3
 discord-py-slash-command==3.0.3
-sat-datetime==1.0
+sat-datetime==1.0.1
 requests==2.28.1
 xmltodict==0.13.0
 pytz==2022.1
