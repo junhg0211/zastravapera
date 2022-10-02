@@ -25,7 +25,7 @@ def create_convert_table():
     pipere_rome = 'ABCDEFGHIKLMNOPQRSTVUZ'
     pipere_gree = 'ΑΒΨΔΕΦΓΗΙΚΛΜΝΟΠϘΡΣΤѴΥΖ'
 
-    result = {'OO': 'Ω', '-': '⳼'} + {r: g for r, g in (pipere_rome, pipere_gree)}
+    result = {'OO': 'Ω', '-': '⳼'} + {r: g for r, g in zip(pipere_rome, pipere_gree)}
     for k, v in result.items():
         result[k.lower()] = v.lower()
 
