@@ -21,6 +21,20 @@ RECENT_CHANGE_DURATION = 10 * 60
 guild_ids = get_programwide('guild_ids')
 
 
+def create_convert_table():
+    pipere_rome = 'ABCDEFGHIKLMNOPQRSTVUZ'
+    pipere_gree = 'ΑΒΨΔΕΦΓΗΙΚΛΜΝΟΠϘΡΣΤѴΥΖ'
+
+    result = {'OO': 'Ω', '-': '⳼'} + {r: g for r, g in (pipere_rome, pipere_gree)}
+    for k, v in result.items():
+        result[k.lower()] = v.lower()
+
+    return result
+
+
+PIPERE_CONVERT_TABLE = create_convert_table()
+
+
 class UtilityCog(Cog):
     def __init__(self, bot: Bot):
         self.bot = bot
@@ -442,6 +456,24 @@ class UtilityCog(Cog):
                                 inline=False)
 
             await message.edit(content=None, embed=embed)
+
+    @cog_ext.cog_slash(
+        description='피페레어 변환기를 실행합니다',
+        guild_ids=guild_ids,
+        options=[
+            create_option(
+                name='roman',
+                description='로마자 문자열을 입력합니다.',
+                option_type=SlashCommandOptionType.STRING,
+                required=True
+            )
+        ]
+    )
+    async def pipeconv(self, ctx: SlashContext, roman: str):
+        for k, v in PIPERE_CONVERT_TABLE:
+            roman = roman.replace(k, v)
+
+        await message.send(f'변환 결과:\n> {roman}')
 
 
 def setup(bot: Bot):
