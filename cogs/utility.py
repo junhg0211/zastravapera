@@ -475,7 +475,7 @@ class UtilityCog(Cog):
         for k, v in PIPERE_CONVERT_TABLE.items():
             roman = roman.replace(k, v)
 
-        await message.send(f'변환 결과:\n> {roman}')
+        await ctx.send(f'변환 결과:\n> {roman}')
 
 
 def setup(bot: Bot):
