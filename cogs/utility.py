@@ -1,4 +1,5 @@
 from asyncio import sleep
+from copy import copy
 from datetime import datetime, timedelta
 from random import choice, randint
 from typing import Optional, Dict, List
@@ -27,7 +28,7 @@ def create_convert_table():
 
     result = {'OO': 'Ω', '-': '⳼'}
     result.update({r: g for r, g in zip(pipere_rome, pipere_gree)})
-    for k, v in result.items():
+    for k, v in copy(result).items():
         result[k.lower()] = v.lower()
 
     return result
