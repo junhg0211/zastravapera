@@ -472,7 +472,7 @@ class UtilityCog(Cog):
         ]
     )
     async def pipeconv(self, ctx: SlashContext, roman: str):
-        for k, v in PIPERE_CONVERT_TABLE:
+        for k, v in PIPERE_CONVERT_TABLE.items():
             roman = roman.replace(k, v)
 
         await message.send(f'변환 결과:\n> {roman}')
