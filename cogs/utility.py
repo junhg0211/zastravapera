@@ -500,7 +500,7 @@ class UtilityCog(Cog):
         ]
     )
     async def luminum(self, ctx: SlashContext, arabic: int):
-        result = Lumiere_Number(arabic)
+        result = lumiere_number(arabic)
         await ctx.send(f'> **아라비아 숫자** : {arabic}\n> **뤼미에르 숫자** : {result}')
 
 
