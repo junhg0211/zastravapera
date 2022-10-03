@@ -11,7 +11,7 @@ from discord.ext import tasks
 from discord.ext.commands import Cog, Bot
 from discord_slash import cog_ext, SlashContext, SlashCommandOptionType
 from discord_slash.utils.manage_commands import create_option
-from sat_datetime import SatDatetime
+from sat_datetime import SatDatetime, SatTimedelta
 
 from const import get_const, get_secret
 from util import get_programwide, jwiki
