@@ -33,8 +33,8 @@ def create_convert_table():
 
     return result
 
-def Lumiere_Number(arabic):
-    
+
+def lumiere_number(arabic):
     number_define = ['za', 'ho', 'san', 'ni', 'chi', 'la', 'pi', 'kan', 'kain', 'laio']
     result = ''
         
@@ -502,6 +502,7 @@ class UtilityCog(Cog):
     async def luminum(self, ctx: SlashContext, arabic: int):
         result = Lumiere_Number(arabic)
         await ctx.send(f'> **아라비아 숫자** : {arabic}\n> **뤼미에르 숫자** : {result}')
+
 
 def setup(bot: Bot):
     bot.add_cog(UtilityCog(bot))
