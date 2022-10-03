@@ -330,7 +330,65 @@ class UtilityCog(Cog):
         )
         sat_datetime = SatDatetime.get_from_datetime(now)
         await ctx.send(f'> 서력 {now.year}년 {now.month}월 {now.day}일 {now.hour}시 {now.minute}분 {now.second}초 (UTC)는\n'
-                       f'> 자소크력은 __{sat_datetime.year}년 {sat_datetime.month}월 {sat_datetime.day}일 '
+                       f'> 자소크력으로 __{sat_datetime.year}년 {sat_datetime.month}월 {sat_datetime.day}일 '
+                       f'{sat_datetime.hour}시 {sat_datetime.minute}분 {sat_datetime.second:.1f}초 (ASN)__ 입니다.')
+
+    @cog_ext.cog_slash(
+        description='코르력을 계산합니다.',
+        guild_ids=guild_ids,
+        options=[
+            create_option(
+                name='year',
+                description='코르력을 계산할 년도를 입력합니다.',
+                option_type=4,
+                required=False
+            ),
+            create_option(
+                name='month',
+                description='코르력을 계산할 월을 입력합니다.',
+                option_type=4,
+                required=False
+            ),
+            create_option(
+                name='day',
+                description='코르력을 계산할 일을 입력합니다.',
+                option_type=4,
+                required=False
+            ),
+            create_option(
+                name='hour',
+                description='코르력을 계산할 시간을 입력합니다.',
+                option_type=4,
+                required=False
+            ),
+            create_option(
+                name='minute',
+                description='코르력을 계산할 분을 입력합니다.',
+                option_type=4,
+                required=False
+            ),
+            create_option(
+                name='second',
+                description='코르력을 계산할 초를 입력합니다.',
+                option_type=10,
+                required=False
+            ),
+        ]
+    )
+    async def khorcalen(self, ctx: SlashContext, year: int = 0, month: int = 0, day: int = 0,
+                      hour: int = 0, minute: int = 0, second: float = 0.0):
+        now = datetime.now()
+        now = datetime(
+            year if year else now.year,
+            month if month else now.month,
+            day if day else now.day,
+            hour if hour else now.hour,
+            minute if minute else now.minute,
+            second if second else now.second
+        )
+        sat_datetime = SatDatetime.get_from_datetime(now) - SatTimedelta(years=3276)
+        await ctx.send(f'> 서력 {now.year}년 {now.month}월 {now.day}일 {now.hour}시 {now.minute}분 {now.second}초 (UTC)는\n'
+                       f'> 코르력으로 __{sat_datetime.year}년 {sat_datetime.month}월 {sat_datetime.day}일 '
                        f'{sat_datetime.hour}시 {sat_datetime.minute}분 {sat_datetime.second:.1f}초 (ASN)__ 입니다.')
 
     @cog_ext.cog_slash(
