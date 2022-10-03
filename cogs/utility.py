@@ -33,6 +33,16 @@ def create_convert_table():
 
     return result
 
+def Lumiere_Number(arabic):
+    
+    number_define = ['za', 'ho', 'san', 'ni', 'chi', 'la', 'pi', 'kan', 'kain', 'laio']
+    result = ''
+        
+    for number in str(arabic):
+        result += number_define[int(number)]
+    
+    return result
+
 
 PIPERE_CONVERT_TABLE = create_convert_table()
 
@@ -477,6 +487,21 @@ class UtilityCog(Cog):
 
         await ctx.send(f'변환 결과:\n> {roman}')
 
+    @cog_ext.cog_slash(
+        description='뤼미에르 숫자로 변환합니다.',
+        guild_ids=guild_ids,
+        options=[
+            create_option(
+                name='arabic',
+                description='아라비아 숫자를 입력합니다.',
+                option_type=SlashCommandOptionType.INTEGER,
+                required=True
+            )
+        ]
+    )
+    async def luminum(self, ctx: SlashContext, arabic: int):
+        result = Lumiere_Number(arabic)
+        await ctx.send(f'> **아라비아 숫자** : {arabic}\n> **뤼미에르 숫자** : {result}')
 
 def setup(bot: Bot):
     bot.add_cog(UtilityCog(bot))
