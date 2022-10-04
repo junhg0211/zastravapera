@@ -33,22 +33,18 @@ def load_cogs():
             print(f'Cog loaded: {file[:-3]}')
 
 
-def start():
+def main():
     parser = ArgumentParser()
     parser.add_argument('-t', '--test', action='store_true',
                         help='runs Zastravapera with `test_bot_token`. without, run with `bot_token` (res/secret.json)')
 
     args = parser.parse_args()
 
+    load_cogs()
     if args.test:
         bot.run(get_secret('test_bot_token'))
     else:
         bot.run(get_secret('bot_token'))
-
-
-def main():
-    load_cogs()
-    start()
 
 
 if __name__ == '__main__':
