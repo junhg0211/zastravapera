@@ -1,3 +1,4 @@
+from argparse import ArgumentParser
 from os import listdir
 
 from discord import Intents
@@ -25,11 +26,30 @@ async def on_ready():
     print(f'Bot loaded. Bot is in {len(guild_ids)} guilds.')
 
 
-for file in listdir('cogs'):
-    if file.endswith('.py') and not file.startswith('_'):
-        bot.load_extension(f'cogs.{file[:-3]}')
-        print(f'Cog loaded: {file[:-3]}')
+def load_cogs():
+    for file in listdir('cogs'):
+        if file.endswith('.py') and not file.startswith('_'):
+            bot.load_extension(f'cogs.{file[:-3]}')
+            print(f'Cog loaded: {file[:-3]}')
+
+
+def start():
+    parser = ArgumentParser()
+    parser.add_argument('-t', '--test', action='store_true',
+                        help='runs Zastravapera with `test_bot_token`. without, run with `bot_token` (res/secret.json)')
+
+    args = parser.parse_args()
+
+    if args.test:
+        bot.run(get_secret('test_bot_token'))
+    else:
+        bot.run(get_secret('bot_token'))
+
+
+def main():
+    load_cogs()
+    start()
 
 
 if __name__ == '__main__':
-    bot.run(get_secret('bot_token'))
+    main()
