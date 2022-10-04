@@ -42,6 +42,7 @@ def main():
 
     load_cogs()
     if args.test:
+        print('Run in test mode...')
         bot.run(get_secret('test_bot_token'))
     else:
         bot.run(get_secret('bot_token'))
