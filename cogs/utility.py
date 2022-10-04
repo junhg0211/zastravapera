@@ -415,13 +415,44 @@ class UtilityCog(Cog):
             )
         ]
     )
+
     async def inzacalen(self, ctx: SlashContext, year: int, month: int = 1, day: int = 1):
         sat_datetime = SatDatetime(year, month, day)
         christian_era = sat_datetime.to_datetime()
         await ctx.send(f'> 자소크력 {year}년 {month}월 {day}일(ASN)은\n'
                        f'> 서력 __{christian_era.year}년 {christian_era.month}월 {christian_era.day}일 {christian_era.hour}시 '
                        f'{christian_era.minute}분 {christian_era.second:.1f}초 (UTC)__입니다.')
-
+        
+    @cog_ext.cog_slash(
+        description='코르력으로 서력 일자를 계산합니다.',
+        guild_ids=guild_ids,
+        options=[
+            create_option(
+                name='year',
+                description='코르력 년',
+                option_type=SlashCommandOptionType.INTEGER,
+                required=True
+            ),
+            create_option(
+                name='month',
+                description='코르력 월',
+                option_type=SlashCommandOptionType.INTEGER,
+                required=False
+            ),
+            create_option(
+                name='day',
+                description='코르력 일',
+                option_type=SlashCommandOptionType.INTEGER,
+                required=False
+            )
+        ]
+    )
+    async def inkhorcalen(self, ctx: SlashContext, year: int, month: int = 1, day: int = 1):
+        sat_datetime = SatDatetime(year, month, day)
+        christian_era = sat_datetime.to_datetime() - SatTimedelta(years=3276)
+        await ctx.send(f'> 코르력 {year}년 {month}월 {day}일(ASN)은\n'
+                       f'> 서력 __{christian_era.year}년 {christian_era.month}월 {christian_era.day}일 {christian_era.hour}시 '
+                       f'{christian_era.minute}분 {christian_era.second:.1f}초 (UTC)__입니다.')
     @cog_ext.cog_slash(
         description='광부위키 문서릅 검색합니다.',
         guild_ids=guild_ids,
