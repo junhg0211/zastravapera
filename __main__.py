@@ -40,12 +40,11 @@ def main():
 
     args = parser.parse_args()
 
-    load_cogs()
     if args.test:
-        print('Run in test mode...')
-        bot.run(get_secret('test_bot_token'))
-    else:
-        bot.run(get_secret('bot_token'))
+        print('Run in test mode ...')
+
+    load_cogs()
+    bot.run(get_secret('test_bot_token' if args.test else 'bot_token'))
 
 
 if __name__ == '__main__':
