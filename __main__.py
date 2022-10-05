@@ -34,8 +34,11 @@ def load_cogs(cog_re=r'.*'):
             if filter_pattern.search(file[:-3]) is None:
                 continue
 
-            bot.load_extension(f'cogs.{file[:-3]}')
-            print(f'Cog loaded: {file[:-3]}')
+            cog_name = file[:-3]
+
+            print(f'Loading cog `{cog_name}` ...', end='\r')
+            bot.load_extension(f'cogs.{cog_name}')
+            print(f'Cog loaded: {cog_name}      ')
 
 
 def main():

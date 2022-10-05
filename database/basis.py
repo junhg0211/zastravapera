@@ -41,6 +41,7 @@ class Database:
 
     def __init__(self, word_class: Type[Word], spreadsheet_key: str, sheet_number: int = 0):
         self.word_class = word_class
+        self.spreadsheet_key = spreadsheet_key
 
         self.credential = gspread.service_account(filename='res/google_credentials.json')
         self.sheet = self.credential.open_by_key(get_const(spreadsheet_key)).get_worksheet(sheet_number)
@@ -50,8 +51,10 @@ class Database:
         self.reload()
 
     def reload(self):
+        print(f'Reloading dictionary from `{self.spreadsheet_key}` ...', end='\r')
         self.sheet_values = self.sheet.get_all_values()[self.word_class.leading_rows:]
         self.last_reload = datetime.now()
+        print(f'Dictionary from `{self.spreadsheet_key}` loaded.      ')
         return self
 
     def add_row(self, values):
