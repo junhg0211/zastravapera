@@ -71,6 +71,8 @@ class UtilityCog(Cog):
         result: Dict[str, List[int, int, str]] = dict()
         if 'item' in changes:
             changes = changes['item']
+            if isinstance(changes, dict):
+                changes = [changes]
             for change in changes:
                 await sleep(0)
                 # merge duplicated changes
