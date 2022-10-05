@@ -109,7 +109,7 @@ class UtilityCog(Cog):
             for title, (oldid, diff, creator) in result.items():
                 embed.add_field(
                     name=title.replace('_', ' '),
-                    value=f'`{creator}`님이 마지막으로 [수정](https://jwiki.kr/wiki/index.php?'
+                    value=f'`{creator}`님이 마지막으로 [수정](http://wiki.shtelo.org/index.php?'
                           f'title={title.replace(" ", "_")}&oldid={oldid}&diff={diff})함.'
                 )
             await send(embed=embed)
@@ -482,6 +482,8 @@ class UtilityCog(Cog):
         if not data['query']['search']:
             await ctx.send('검색 결과가 없습니다.')
             return
+
+        result = data['query']['search']
 
         embed = Embed(title=f'`{query}` 광부위키 문서 검색 결과', color=get_const('sat_color'))
         for result in data['query']['search'][:25]:
