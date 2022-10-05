@@ -36,12 +36,14 @@ guild_ids = get_programwide('guild_ids')
 
 def create_convert_table():
     pipere_rome = 'ABCDEFGHIKLMNOPQRSTVUZ'
-    pipere_gree = 'ΑΒΨΔΕΦΓΗΙΚΛΜΝΟΠϞΡΣΤѶΥΖ'
+    pipere_gree = 'ΑΒΨΔΕΦΓΗΙΚΛΜΝΟΠϘΡΣΤѶΥΖ'
 
     result = {'OO': 'Ω', '-': '⳼'}
     result.update({r: g for r, g in zip(pipere_rome, pipere_gree)})
     for k, v in copy(result).items():
         result[k.lower()] = v.lower()
+
+    result['Q'] = 'ϟ'
 
     return result
 
