@@ -61,10 +61,7 @@ class UtilityCog(Cog):
 
     # noinspection PyTypeChecker
     async def recent_changes(self, ctx: Optional[SlashContext], channel: TextChannel):
-        if ctx is not None:
-            send = ctx.send
-        else:
-            send = channel.send
+        send = (channel if ctx is None else ctx).send
 
         changes = jwiki.get_recent_changes(from_=self.last_recent_changes)['rss']['channel']
 
@@ -75,19 +72,21 @@ class UtilityCog(Cog):
                 changes = [changes]
             for change in changes:
                 await sleep(0)
-                # merge duplicated changes
+
                 parsed = parse.parse_qs(parse.urlsplit(change['link']).query)
-                if 'title' in parsed:
-                    title = parsed['title'][0]
-                    diff = int(parsed['diff'][0])
-                    oldid = int(parsed['oldid'][0])
-                    if title in result:
-                        original_oldid = int(result[title][0])
-                        original_diff = int(result[title][1])
-                        result[title][0] = min(original_oldid, oldid)
-                        result[title][1] = max(original_diff, diff)
-                    else:
-                        result[title] = [oldid, diff, change['dc:creator']]
+                if 'title' not in prased:
+                    continue
+
+                title = parsed['title'][0]
+                diff = int(parsed['diff'][0])
+                oldid = int(parsed['oldid'][0])
+                if title in result:
+                    original_oldid = int(result[title][0])
+                    original_diff = int(result[title][1])
+                    result[title][0] = min(original_oldid, oldid)
+                    result[title][1] = max(original_diff, diff)
+                else:
+                    result[title] = [oldid, diff, change['dc:creator']]
 
         if result:
             embed = Embed(

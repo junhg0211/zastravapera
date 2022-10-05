@@ -362,15 +362,16 @@ class DictionaryCog(Cog):
     async def reload(self, ctx: SlashContext, language: str = ''):
         message = await ctx.send('데이터베이스를 다시 불러옵니다…')
         if language:
-            if language in databases:
-                databases[language].reload()
-            else:
+            if language not in databases:
                 await message.edit(content='데이터베이스 이름을 확인해주세요!!')
+                return
+
+            databases[language].reload()
         else:
             for database in databases.values():
                 database.reload()
                 await sleep(0)
-        await message.edit(content=f'{f"`{language}` " if language else ""} 데이터베이스를 다시 불러왔습니다.')
+        await message.edit(content=f'{f"`{language}` " if language else ""}데이터베이스를 다시 불러왔습니다.')
 
 
 def setup(bot: Bot):
