@@ -17,7 +17,7 @@ from const import get_const, get_secret
 from util import get_programwide, jwiki
 from util.thravelemeh import WordGenerator
 
-RECENT_CHANGE_DURATION = 10 * 60
+RECENT_CHANGE_DURATION = 2 * 60
 
 guild_ids = get_programwide('guild_ids')
 
@@ -103,12 +103,9 @@ class UtilityCog(Cog):
 
         self.last_recent_changes = datetime.now()
 
-    @tasks.loop(seconds=10)
+    @tasks.loop(seconds=RECENT_CHANGE_DURATION)
     async def track_recent_changes(self):
         """ 광부위키 최근 변경 사항을 채팅 채널에 전송합니다. """
-
-        if datetime.now() - self.last_recent_changes < timedelta(seconds=RECENT_CHANGE_DURATION):
-            return
 
         while self.main_channel is None:
             self.main_channel = self.bot.get_channel(get_const('changes_channel_id'))
