@@ -8,6 +8,7 @@ from discord_slash.utils.manage_commands import create_option
 from const import get_const
 from database import Database, DialectDatabase, PosDatabase
 from database.arteut import ArteutWord
+from database.mikhoros import MikhorosWord
 from database.enjie import EnjieDatabase
 from database.felinkia import FelinkiaWord
 from database.hemelvaarht import ThravelemehWord
@@ -28,7 +29,8 @@ databases = {
     'xei': PosDatabase('xei_database', 0, 0, 2, 3),
     'iremna': Database(IremnaWord, 'iremna_database', 0),
     'arteut': Database(ArteutWord, 'arteut_database', 0),
-    'enjie': EnjieDatabase('enjie_database')
+    'enjie': EnjieDatabase('enjie_database'),
+    'mikhoros': Database(MikhorosWord, 'mikhoros_database', 0)
 }
 
 guild_ids = get_programwide('guild_ids')
@@ -344,6 +346,25 @@ class DictionaryCog(Cog):
             title=f'`{query}`의 검색 결과',
             description='연서어 단어를 검색합니다.',
             color=get_const('enjie_color')
+        ), query)
+
+    @cog_ext.cog_slash(
+        description='미코로스 아케뒤 단어를 검색합니다.',
+        guild_ids=guild_ids,
+        options=[
+            create_option(
+                name='query',
+                description='검색할 단어',
+                required=True,
+                option_type=SlashCommandOptionType.STRING
+            )
+        ]
+    )
+    async def mikhoros(self, ctx: SlashContext, query: str):
+        await handle_dictionary(ctx, databases['mikhoros'], Embed(
+            title=f'`{query}`의 검색 결과',
+            description='미코로스 아케뒤 단어를 검색합니다.',
+            color=get_const('mikhoros_color')
         ), query)
 
     @cog_ext.cog_slash(
