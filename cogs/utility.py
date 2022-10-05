@@ -54,6 +54,7 @@ class UtilityCog(Cog):
         self.main_channel: Optional[TextChannel] = None
 
         self.last_recent_changes = datetime.now()
+        self.track_recent_changes.start()
 
     def cog_unload(self):
         pass
@@ -72,27 +73,19 @@ class UtilityCog(Cog):
             changes = changes['item']
             for change in changes:
                 await sleep(0)
-                try:
-                    # try because sometimes ``in`` operation causes TypeError
-                    # but don't know why
-                    if '사트' not in jwiki.get_categories(change['title']):
-                        continue
-                except TypeError:
-                    pass
-                else:
-                    # merge duplicated changes
-                    parsed = parse.parse_qs(parse.urlsplit(change['link']).query)
-                    if 'title' in parsed:
-                        title = parsed['title'][0]
-                        diff = int(parsed['diff'][0])
-                        oldid = int(parsed['oldid'][0])
-                        if title in result:
-                            original_oldid = int(result[title][0])
-                            original_diff = int(result[title][1])
-                            result[title][0] = min(original_oldid, oldid)
-                            result[title][1] = max(original_diff, diff)
-                        else:
-                            result[title] = [oldid, diff, change['dc:creator']]
+                # merge duplicated changes
+                parsed = parse.parse_qs(parse.urlsplit(change['link']).query)
+                if 'title' in parsed:
+                    title = parsed['title'][0]
+                    diff = int(parsed['diff'][0])
+                    oldid = int(parsed['oldid'][0])
+                    if title in result:
+                        original_oldid = int(result[title][0])
+                        original_diff = int(result[title][1])
+                        result[title][0] = min(original_oldid, oldid)
+                        result[title][1] = max(original_diff, diff)
+                    else:
+                        result[title] = [oldid, diff, change['dc:creator']]
 
         if result:
             embed = Embed(
@@ -110,7 +103,7 @@ class UtilityCog(Cog):
 
     @tasks.loop(seconds=10)
     async def track_recent_changes(self):
-        """ Jwiki 최근 변경 내역 중에서 사트 카테고리가 포함된 변경 사항을 채팅 채널에 전송합니다. """
+        """ 광부위키 최근 변경 사항을 채팅 채널에 전송합니다. """
 
         if datetime.now() - self.last_recent_changes < timedelta(seconds=RECENT_CHANGE_DURATION):
             return

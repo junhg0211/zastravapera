@@ -5,13 +5,13 @@ import requests
 import xmltodict
 from pytz import utc
 
-JWIKI_API = 'https://jwiki.kr/wiki/api.php'
+GWANGBUWIKI_API = 'http://wiki.shtelo.org/api.php'
 
 
 def get_categories(title: str) -> List[str]:
     """ 제이위키 문서의 분류 이름들을 반환합니다. """
 
-    r = requests.get(f'{JWIKI_API}?action=parse&page={title}&prop=categories&format=json')
+    r = requests.get(f'{GWANGBUWIKI_API}?action=parse&page={title}&prop=categories&format=json')
     j = r.json()
     try:
         return list(map(lambda x: x['*'], j['parse']['categories']))
@@ -29,7 +29,7 @@ def get_recent_changes(*, from_: Optional[datetime] = None):
     :type: Dict화 xml
     """
 
-    url = f'{JWIKI_API}?action=feedrecentchanges'
+    url = f'{GWANGBUWIKI_API}?action=feedrecentchanges'
     if from_ is not None:
         time = from_.astimezone(utc).strftime('%Y-%m-%d %H:%M:%S')
         url += f'&from={time}'
