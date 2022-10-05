@@ -14,10 +14,22 @@ from discord_slash.utils.manage_commands import create_option
 from sat_datetime import SatDatetime, SatTimedelta
 
 from const import get_const, get_secret
-from util import get_programwide, jwiki
+from util import get_programwide, jwiki, papago
 from util.thravelemeh import WordGenerator
 
-RECENT_CHANGE_DURATION = 10 * 60
+RECENT_CHANGE_DURATION = 2 * 60
+
+TRANSLATABLE_TABLE = {
+    'ko': ['en', 'ja', 'zh-CN', 'zh-TW', 'es', 'fr', 'ru', 'vi', 'th', 'id', 'de', 'it'],
+    'zh-CN': ['zh-TW', 'ja'],
+    'zh-TW': ['ja'],
+    'en': ['ja', 'zh-CN', 'zh-TW', 'fr']
+}
+TO_LANGUAGES = list()
+for to_languages in TRANSLATABLE_TABLE.values():
+    for to_language in to_languages:
+        if to_language not in TO_LANGUAGES:
+            TO_LANGUAGES.append(to_language)
 
 guild_ids = get_programwide('guild_ids')
 
@@ -54,45 +66,39 @@ class UtilityCog(Cog):
         self.main_channel: Optional[TextChannel] = None
 
         self.last_recent_changes = datetime.now()
+        self.track_recent_changes.start()
 
     def cog_unload(self):
         pass
 
     # noinspection PyTypeChecker
     async def recent_changes(self, ctx: Optional[SlashContext], channel: TextChannel):
-        if ctx is not None:
-            send = ctx.send
-        else:
-            send = channel.send
+        send = (channel if ctx is None else ctx).send
 
         changes = jwiki.get_recent_changes(from_=self.last_recent_changes)['rss']['channel']
 
         result: Dict[str, List[int, int, str]] = dict()
         if 'item' in changes:
             changes = changes['item']
+            if isinstance(changes, dict):
+                changes = [changes]
             for change in changes:
                 await sleep(0)
-                try:
-                    # try because sometimes ``in`` operation causes TypeError
-                    # but don't know why
-                    if '사트' not in jwiki.get_categories(change['title']):
-                        continue
-                except TypeError:
-                    pass
+
+                parsed = parse.parse_qs(parse.urlsplit(change['link']).query)
+                if 'title' not in parsed:
+                    continue
+
+                title = parsed['title'][0]
+                diff = int(parsed['diff'][0])
+                oldid = int(parsed['oldid'][0])
+                if title in result:
+                    original_oldid = int(result[title][0])
+                    original_diff = int(result[title][1])
+                    result[title][0] = min(original_oldid, oldid)
+                    result[title][1] = max(original_diff, diff)
                 else:
-                    # merge duplicated changes
-                    parsed = parse.parse_qs(parse.urlsplit(change['link']).query)
-                    if 'title' in parsed:
-                        title = parsed['title'][0]
-                        diff = int(parsed['diff'][0])
-                        oldid = int(parsed['oldid'][0])
-                        if title in result:
-                            original_oldid = int(result[title][0])
-                            original_diff = int(result[title][1])
-                            result[title][0] = min(original_oldid, oldid)
-                            result[title][1] = max(original_diff, diff)
-                        else:
-                            result[title] = [oldid, diff, change['dc:creator']]
+                    result[title] = [oldid, diff, change['dc:creator']]
 
         if result:
             embed = Embed(
@@ -108,12 +114,9 @@ class UtilityCog(Cog):
 
         self.last_recent_changes = datetime.now()
 
-    @tasks.loop(seconds=10)
+    @tasks.loop(seconds=RECENT_CHANGE_DURATION)
     async def track_recent_changes(self):
-        """ Jwiki 최근 변경 내역 중에서 사트 카테고리가 포함된 변경 사항을 채팅 채널에 전송합니다. """
-
-        if datetime.now() - self.last_recent_changes < timedelta(seconds=RECENT_CHANGE_DURATION):
-            return
+        """ 광부위키 최근 변경 사항을 채팅 채널에 전송합니다. """
 
         while self.main_channel is None:
             self.main_channel = self.bot.get_channel(get_const('changes_channel_id'))
@@ -591,6 +594,42 @@ class UtilityCog(Cog):
     async def luminum(self, ctx: SlashContext, arabic: int):
         result = lumiere_number(arabic)
         await ctx.send(f'> **아라비아 숫자** : {arabic}\n> **뤼미에르 숫자** : {result}')
+
+    @cog_ext.cog_slash(
+        description='파파고 번역을 실행합니다.',
+        guild_ids=guild_ids,
+        options=[
+            create_option(
+                name='sentence',
+                description='번역할 문장을 입력합니다.',
+                option_type=SlashCommandOptionType.STRING,
+                required=True
+            ),
+            create_option(
+                name='from_language',
+                description='출발 언어를 입력합니다.',
+                option_type=SlashCommandOptionType.STRING,
+                required=False,
+                choices=TRANSLATABLE_TABLE.keys(),
+            ),
+            create_option(
+                name='to_language',
+                description='도착 언어를 입력합니다.',
+                option_type=SlashCommandOptionType.STRING,
+                required=False,
+                choices=TO_LANGUAGES
+            )
+        ]
+    )
+    async def papago(self, ctx: SlashContext, sentence: str, from_language: str = 'ko', to_language: str = 'en'):
+        if to_language not in TRANSLATABLE_TABLE[from_language]:
+            languages = ', '.join(map(lambda x: f'`{x}`', TO_LANGUAGES[from_language]))
+            await ctx.send(f'시작 언어가`{from_language}`인 경우에는 도착 언어로 다음만 선택할 수 있습니다!\n'
+                           f'> {languages}')
+            return
+
+        result = papago.translate(sentence, from_language, to_language)
+        await ctx.send(f'번역문\n> {sentence}\n번역 결과\n> {result}')
 
 
 def setup(bot: Bot):
