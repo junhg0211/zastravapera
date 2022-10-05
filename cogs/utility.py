@@ -14,10 +14,22 @@ from discord_slash.utils.manage_commands import create_option
 from sat_datetime import SatDatetime, SatTimedelta
 
 from const import get_const, get_secret
-from util import get_programwide, jwiki
+from util import get_programwide, jwiki, papago
 from util.thravelemeh import WordGenerator
 
 RECENT_CHANGE_DURATION = 2 * 60
+
+TRANSLATABLE_TABLE = {
+    'ko': ['en', 'ja', 'zh-CN', 'zh-TW', 'es', 'fr', 'ru', 'vi', 'th', 'id', 'de', 'it'],
+    'zh-CN': ['zh-TW', 'ja'],
+    'zh-TW': ['ja'],
+    'en': ['ja', 'zh-CN', 'zh-TW', 'fr']
+}
+TO_LANGUAGES = list()
+for to_languages in TRANSLATABLE_TABLE.values():
+    for to_language in to_languages:
+        if to_language not in TO_LANGUAGES:
+            TO_LANGUAGES.append(to_language)
 
 guild_ids = get_programwide('guild_ids')
 
@@ -582,6 +594,42 @@ class UtilityCog(Cog):
     async def luminum(self, ctx: SlashContext, arabic: int):
         result = lumiere_number(arabic)
         await ctx.send(f'> **아라비아 숫자** : {arabic}\n> **뤼미에르 숫자** : {result}')
+
+    @cog_ext.cog_slash(
+        description='파파고 번역을 실행합니다.',
+        guild_ids=guild_ids,
+        options=[
+            create_option(
+                name='sentence',
+                description='번역할 문장을 입력합니다.',
+                option_type=SlashCommandOptionType.STRING,
+                required=True
+            ),
+            create_option(
+                name='from_language',
+                description='출발 언어를 입력합니다.',
+                option_type=SlashCommandOptionType.STRING,
+                required=False,
+                choices=TRANSLATABLE_TABLE.keys(),
+            ),
+            create_option(
+                name='to_language',
+                description='도착 언어를 입력합니다.',
+                option_type=SlashCommandOptionType.STRING,
+                required=False,
+                choices=TO_LANGUAGES
+            )
+        ]
+    )
+    async def papago(self, ctx: SlashContext, sentence: str, from_language: str = 'ko', to_language: str = 'en'):
+        if to_language not in TRANSLATABLE_TABLE[from_language]:
+            languages = ', '.join(map(lambda x: f'`{x}`', TO_LANGUAGES[from_language]))
+            await ctx.send(f'시작 언어가`{from_language}`인 경우에는 도착 언어로 다음만 선택할 수 있습니다!\n'
+                           f'> {languages}')
+            return
+
+        result = papago.translate(sentence, from_language, to_language)
+        await ctx.send(f'번역문\n> {sentence}\n번역 결과\n> {result}')
 
 
 def setup(bot: Bot):
