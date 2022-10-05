@@ -86,7 +86,7 @@ class UtilityCog(Cog):
                 await sleep(0)
 
                 parsed = parse.parse_qs(parse.urlsplit(change['link']).query)
-                if 'title' not in prased:
+                if 'title' not in parsed:
                     continue
 
                 title = parsed['title'][0]
