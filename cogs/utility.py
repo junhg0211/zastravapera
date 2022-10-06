@@ -43,7 +43,7 @@ def create_convert_table():
     for k, v in copy(result).items():
         result[k.lower()] = v.lower()
 
-    result['Q'] = 'ϟ'
+    result['q'] = 'ϟ'
 
     return result
 
