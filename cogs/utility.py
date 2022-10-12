@@ -51,10 +51,10 @@ def create_convert_table():
 def lumiere_number(arabic):
     number_define = ['za', 'ho', 'san', 'ni', 'chi', 'la', 'pi', 'kan', 'kain', 'laio']
     result = ''
-        
+
     for number in str(arabic):
         result += number_define[int(number)]
-    
+
     return result
 
 
@@ -596,6 +596,77 @@ class UtilityCog(Cog):
     async def luminum(self, ctx: SlashContext, arabic: int):
         result = lumiere_number(arabic)
         await ctx.send(f'> **아라비아 숫자** : {arabic}\n> **뤼미에르 숫자** : {result}')
+
+    @cog_ext.cog_slash(
+        description='루시타력을 계산합니다.',
+        guild_ids=guild_ids,
+        options=[
+            create_option(
+                name='year',
+                description='루시타력을 계산할 년도를 입력합니다.',
+                option_type=4,
+                required=False
+            ),
+            create_option(
+                name='month',
+                description='루시타력을 계산할 월을 입력합니다.',
+                option_type=4,
+                required=False
+            ),
+            create_option(
+                name='day',
+                description='루시타력을 계산할 일을 입력합니다.',
+                option_type=4,
+                required=False
+            ),
+            create_option(
+                name='hour',
+                description='루시타력을 계산할 시간을 입력합니다.',
+                option_type=4,
+                required=False
+            ),
+            create_option(
+                name='minute',
+                description='루시타력을 계산할 분을 입력합니다.',
+                option_type=4,
+                required=False
+            ),
+            create_option(
+                name='second',
+                description='루시타력을 계산할 초를 입력합니다.',
+                option_type=10,
+                required=False
+            ),
+        ]
+    )
+    async def lusicalen(self, ctx: SlashContext, year: int = 0, month: int = 0, day: int = 0,
+                        hour: int = 0, minute: int = 0, second: float = 0.0):
+        earth_now = datetime.now()
+        earth_now = datetime(
+            year if year else earth_now.year,
+            month if month else earth_now.month,
+            day if day else earth_now.day,
+            hour if hour else earth_now.hour,
+            minute if minute else earth_now.minute,
+            second if second else earth_now.second
+        )
+        zasokese_year = SatDatetime.get_from_datetime(earth_now).get_on_year()
+        hanka_year = zasokese_year + 8191.5
+        mesina_year = hanka_year / 73 * 44
+        lusita_year = mesina_year - 1924
+
+        lusita_year, lusita_day = int(lusita_year), lusita_year % 1 * 365
+
+        lusita_month, lusita_day = int(lusita_day / 91) * 4 + int(lusita_day % 91 // 23) + 1, lusita_day % 91 % 23
+
+        lusita_day, lusita_hour = int(lusita_day) + 1, lusita_day % 1 * 24
+        lusita_hour, lusita_minute = int(lusita_hour), lusita_hour % 1 * 60
+        lusita_minute, lusita_second = int(lusita_minute), lusita_minute % 1 * 60
+
+        await ctx.send(f'> 서력 {earth_now.year}년 {earth_now.month}월 {earth_now.day}일 '
+                       f'{earth_now.hour}시 {earth_now.minute}분 {earth_now.second}초 (UTC)는\n'
+                       f'> 루시타력으로 __{lusita_year}년 {lusita_month}월 {lusita_day}일 '
+                       f'{lusita_hour}시 {lusita_minute}분 {lusita_second:.1f}초 (ASNR)__ 입니다.')
 
     @cog_ext.cog_slash(
         description='파파고 번역을 실행합니다.',
