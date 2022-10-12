@@ -1,6 +1,6 @@
 from asyncio import sleep
 from copy import copy
-from datetime import datetime, timedelta
+from datetime import datetime
 from random import choice, randint
 from typing import Optional, Dict, List
 from urllib import parse
@@ -25,11 +25,11 @@ TRANSLATABLE_TABLE = {
     'zh-TW': ['ja'],
     'en': ['ja', 'zh-CN', 'zh-TW', 'fr']
 }
-TO_LANGUAGES = list()
-for to_languages in TRANSLATABLE_TABLE.values():
-    for to_language in to_languages:
-        if to_language not in TO_LANGUAGES:
-            TO_LANGUAGES.append(to_language)
+TO_LANGUAGES: List[str] = list()
+for tls in TRANSLATABLE_TABLE.values():
+    for tl in tls:
+        if tl not in TO_LANGUAGES:
+            TO_LANGUAGES.append(tl)
 
 guild_ids = get_programwide('guild_ids')
 
@@ -381,7 +381,7 @@ class UtilityCog(Cog):
         ]
     )
     async def khorcalen(self, ctx: SlashContext, year: int = 0, month: int = 0, day: int = 0,
-                      hour: int = 0, minute: int = 0, second: float = 0.0):
+                        hour: int = 0, minute: int = 0, second: float = 0.0):
         now = datetime.now()
         now = datetime(
             year if year else now.year,
@@ -424,9 +424,9 @@ class UtilityCog(Cog):
         sat_datetime = SatDatetime(year, month, day)
         christian_era = sat_datetime.to_datetime()
         await ctx.send(f'> 자소크력 {year}년 {month}월 {day}일 (ASN)은\n'
-                       f'> 서력 __{christian_era.year}년 {christian_era.month}월 {christian_era.day}일 {christian_era.hour}시 '
-                       f'{christian_era.minute}분 {christian_era.second:.1f}초 (UTC)__입니다.')
-        
+                       f'> 서력 __{christian_era.year}년 {christian_era.month}월 {christian_era.day}일 '
+                       f'{christian_era.hour}시 {christian_era.minute}분 {christian_era.second:.1f}초 (UTC)__입니다.')
+
     @cog_ext.cog_slash(
         description='코르력으로 서력 일자를 계산합니다.',
         guild_ids=guild_ids,
@@ -455,8 +455,8 @@ class UtilityCog(Cog):
         sat_datetime = SatDatetime(year, month, day) + SatTimedelta(years=3276)
         christian_era = sat_datetime.to_datetime()
         await ctx.send(f'> 코르력 {year}년 {month}월 {day}일 (ASN)은\n'
-                       f'> 서력 __{christian_era.year}년 {christian_era.month}월 {christian_era.day}일 {christian_era.hour}시 '
-                       f'{christian_era.minute}분 {christian_era.second:.1f}초 (UTC)__입니다.')
+                       f'> 서력 __{christian_era.year}년 {christian_era.month}월 {christian_era.day}일 '
+                       f'{christian_era.hour}시 {christian_era.minute}분 {christian_era.second:.1f}초 (UTC)__입니다.')
 
     @cog_ext.cog_slash(
         description='광부위키 문서릅 검색합니다.',
@@ -482,8 +482,6 @@ class UtilityCog(Cog):
         if not data['query']['search']:
             await ctx.send('검색 결과가 없습니다.')
             return
-
-        result = data['query']['search']
 
         embed = Embed(title=f'`{query}` 광부위키 문서 검색 결과', color=get_const('sat_color'))
         for result in data['query']['search'][:25]:
@@ -614,7 +612,7 @@ class UtilityCog(Cog):
                 description='출발 언어를 입력합니다.',
                 option_type=SlashCommandOptionType.STRING,
                 required=False,
-                choices=TRANSLATABLE_TABLE.keys(),
+                choices=list(TRANSLATABLE_TABLE.keys()),
             ),
             create_option(
                 name='to_language',
@@ -627,7 +625,7 @@ class UtilityCog(Cog):
     )
     async def papago(self, ctx: SlashContext, sentence: str, from_language: str = 'ko', to_language: str = 'en'):
         if to_language not in TRANSLATABLE_TABLE[from_language]:
-            languages = ', '.join(map(lambda x: f'`{x}`', TO_LANGUAGES[from_language]))
+            languages = ', '.join(map(lambda x: f'`{x}`', TRANSLATABLE_TABLE[from_language]))
             await ctx.send(f'시작 언어가`{from_language}`인 경우에는 도착 언어로 다음만 선택할 수 있습니다!\n'
                            f'> {languages}')
             return
