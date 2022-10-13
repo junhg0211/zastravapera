@@ -43,10 +43,12 @@ def load_cogs(cog_re=r'.*'):
 
 def main():
     parser = ArgumentParser()
+    parser._actions[0].help = '도움말 메시지를 보여주고 종료합니다'
     parser.add_argument('-t', '--test', action='store_true',
-                        help='runs Zastravapera with `test_bot_token`. without, run with `bot_token` (res/secret.json)')
+                        help='자스트라바페라 봇을 `test_bot_token`으로 실행합니다. '
+                             '설정되지 않은 경우, `bot_token`으로 실행합니다')
     parser.add_argument('-c', '--cog', action='store', default=r'.*',
-                        help='runs Zastravapera whose name is searchable with this regex')
+                        help='이 정규표현식을 만족하는 이름을 가진 코그만 실행합니다')
 
     args = parser.parse_args()
 
