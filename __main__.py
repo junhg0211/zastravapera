@@ -58,10 +58,11 @@ def main():
     if args.test:
         print('Run in test mode ...')
 
-    for override in args.override:
-        key, value = override.split('=')
-        override_const(key, eval(value))
-        print(f'Constant overrode: {key} = {value}')
+    if args.override:
+        for override in args.override:
+            key, value = override.split('=')
+            override_const(key, eval(value))
+            print(f'Constant overrode: {key} = {value}')
 
     load_cogs(args.cog)
     bot.run(get_secret('test_bot_token' if args.test else 'bot_token'))
