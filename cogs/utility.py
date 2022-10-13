@@ -17,7 +17,7 @@ from const import get_const, get_secret
 from util import get_programwide, jwiki, papago
 from util.thravelemeh import WordGenerator
 
-RECENT_CHANGE_DURATION = 2 * 60
+RECENT_CHANGE_DURATION = 5 * 60
 
 TRANSLATABLE_TABLE = {
     'ko': ['en', 'ja', 'zh-CN', 'zh-TW', 'es', 'fr', 'ru', 'vi', 'th', 'id', 'de', 'it'],
@@ -58,6 +58,17 @@ def lumiere_number(arabic):
     return result
 
 
+def merge_changes(change1, change2):
+    original_oldid = int(change1[0])
+    original_diff = int(change1[1])
+
+    return [
+        min(original_oldid, change2[0]),
+        max(original_diff, change2[1]),
+        change1[2]
+    ]
+
+
 PIPERE_CONVERT_TABLE = create_convert_table()
 
 
@@ -70,16 +81,19 @@ class UtilityCog(Cog):
         self.last_recent_changes = datetime.now()
         self.track_recent_changes.start()
 
+        self.changes: Dict[str, List[int, int, str]] = dict()
+
     def cog_unload(self):
         pass
 
     # noinspection PyTypeChecker
     async def recent_changes(self, ctx: Optional[SlashContext], channel: TextChannel):
+        print('recent_change')
         send = (channel if ctx is None else ctx).send
 
         changes = jwiki.get_recent_changes(from_=self.last_recent_changes)['rss']['channel']
 
-        result: Dict[str, List[int, int, str]] = dict()
+        converted: Dict[str, List[int, int, str]] = dict()
         if 'item' in changes:
             changes = changes['item']
             if isinstance(changes, dict):
@@ -94,18 +108,24 @@ class UtilityCog(Cog):
                 title = parsed['title'][0]
                 diff = int(parsed['diff'][0])
                 oldid = int(parsed['oldid'][0])
-                if title in result:
-                    original_oldid = int(result[title][0])
-                    original_diff = int(result[title][1])
-                    result[title][0] = min(original_oldid, oldid)
-                    result[title][1] = max(original_diff, diff)
+                if title in converted:
+                    converted[title] = merge_changes(converted[title], [oldid, diff])
                 else:
-                    result[title] = [oldid, diff, change['dc:creator']]
+                    converted[title] = [oldid, diff, change['dc:creator']]
+
+        result = dict()
+        for title, previous_change in list(self.changes.items()):
+            if title in converted:
+                self.changes[title] = merge_changes(previous_change, converted[title])
+            else:
+                result[title] = previous_change
+                del self.changes[title]
+        for title, change in converted.items():
+            if title not in self.changes:
+                self.changes[title] = change
 
         if result:
-            embed = Embed(
-                title='최근 변경된 문서', description=f'{self.last_recent_changes}부터',
-                color=get_const('sat_color'))
+            embed = Embed(title='최근 변경된 문서', color=get_const('sat_color'))
             for title, (oldid, diff, creator) in result.items():
                 embed.add_field(
                     name=title.replace('_', ' '),
