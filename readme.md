@@ -9,10 +9,13 @@
 ## 파라미터
 
 ```
-usage: . [-h] [-t] [-c COG]
+usage: __main__.py [-h] [-t] [-c COG] [-o OVERRIDE]
 
 options:
-  -h, --help         도움말 메시지를 보여주고 종료합니다
-  -t, --test         자스트라바페라 봇을 `test_bot_token`으로 실행합니다. 설정되지 않은 경우, `bot_token`으로 실행합니다
-  -c COG, --cog COG  이 정규표현식을 만족하는 이름을 가진 코그만 실행합니다
+  -h, --help            도움말 메시지를 보여주고 종료합니다
+  -t, --test            자스트라바페라 봇을 `test_bot_token`으로 실행합니다. 설정되지 않은 경우,
+                        `bot_token`으로 실행합니다
+  -c COG, --cog COG     이 정규표현식을 만족하는 이름을 가진 코그만 실행합니다
+  -o OVERRIDE, --override OVERRIDE
+                        const를 override합니다. `key=value`의 형태로 입력합니다.
 ```
