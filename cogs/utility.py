@@ -88,7 +88,6 @@ class UtilityCog(Cog):
 
     # noinspection PyTypeChecker
     async def recent_changes(self, ctx: Optional[SlashContext], channel: TextChannel):
-        print('recent_change')
         send = (channel if ctx is None else ctx).send
 
         changes = jwiki.get_recent_changes(from_=self.last_recent_changes)['rss']['channel']
