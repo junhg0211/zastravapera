@@ -62,6 +62,10 @@ def merge_changes(change1, change2):
     original_oldid = int(change1[0])
     original_diff = int(change1[1])
 
+    for creator in change2[2]:
+        if creator not in change1[2]:
+            change1[2].append(creator)
+
     return [
         min(original_oldid, change2[0]),
         max(original_diff, change2[1]),
@@ -108,9 +112,9 @@ class UtilityCog(Cog):
                 diff = int(parsed['diff'][0])
                 oldid = int(parsed['oldid'][0])
                 if title in converted:
-                    converted[title] = merge_changes(converted[title], [oldid, diff])
+                    converted[title] = merge_changes(converted[title], [oldid, diff, [change['dc:creator']]])
                 else:
-                    converted[title] = [oldid, diff, change['dc:creator']]
+                    converted[title] = [oldid, diff, [change['dc:creator']]]
 
         result = dict()
         for title, previous_change in list(self.changes.items()):
@@ -128,7 +132,7 @@ class UtilityCog(Cog):
             for title, (oldid, diff, creator) in result.items():
                 embed.add_field(
                     name=title.replace('_', ' '),
-                    value=f'`{creator}`님이 마지막으로 [수정](http://wiki.shtelo.org/index.php?'
+                    value=f'__{"__, __".join(creator)}__님이 [수정](http://wiki.shtelo.org/index.php?'
                           f'title={title.replace(" ", "_")}&oldid={oldid}&diff={diff})함.'
                 )
             await send(embed=embed)
