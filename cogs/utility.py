@@ -1,3 +1,4 @@
+import re
 from asyncio import sleep
 from copy import copy
 from datetime import datetime
@@ -30,6 +31,8 @@ for tls in TRANSLATABLE_TABLE.values():
     for tl in tls:
         if tl not in TO_LANGUAGES:
             TO_LANGUAGES.append(tl)
+
+DICE_RE = re.compile(r'(\d+)[dD](\d+)([+\-]\d+)?')
 
 guild_ids = get_programwide('guild_ids')
 
@@ -242,38 +245,28 @@ class UtilityCog(Cog):
         description='주사위를 굴립니다.',
         options=[
             create_option(
-                name='kind',
-                description='주사위의 종류를 정합니다. (d4, d6, d8, d10, d12, d20, d100, d%) 등을 사용할 수 있습니다.',
+                name='spec',
+                description='굴림의 타입을 결정합니다. `(\\d+)[dD](\\d+)([+\\-]\\d+)?`의 형태로 입력합니다. '
+                            '기본값은 `1d6`입니다. (예시: `1d6`, `2D20`, `6d10+4`)',
                 option_type=3,
-                choices=['d4', 'd6', 'd8', 'd10', 'd12', 'd20', 'd100', 'd%'],
-                required=False
-            ),
-            create_option(
-                name='count',
-                description='굴리는 주사위의 개수',
-                option_type=4,
                 required=False
             )
         ]
     )
-    async def dice(self, ctx: SlashContext, kind: str = 'd6', count: int = 1):
-        if kind == 'd%':
-            kind = 'd100'
-        kind = int(kind[1:])
+    async def dice(self, ctx: SlashContext, spec: str = '1d6'):
+        count, dice_type, delta = map(lambda x: int(x) if x else 0, DICE_RE.findall(spec)[0])
 
-        dice = 0
         numbers = list()
+        sum_ = 0
         for _ in range(count):
-            number = randint(1, kind)
-            dice += number
-            numbers.append(number)
+            numbers.append(number := randint(1, dice_type))
+            sum_ += number
 
-        embed = Embed(
-            title='주사위 굴림',
-            description=f'{count}d{kind}'
-        )
-        embed.add_field(name='굴린 주사위', value=', '.join(map(str, numbers)))
-        embed.add_field(name='눈 합', value=str(dice))
+        embed = Embed(title='주사위 굴림', description=spec)
+        embed.add_field(name='굴린 주사위', value=', '.join(map(str, numbers)), inline=False)
+        embed.add_field(name='눈 합', value=str(sum_))
+        embed.add_field(name='델타', value=str(delta))
+        embed.add_field(name='합계', value=f'**{sum_ + delta}**')
 
         await ctx.send(embed=embed)
 
