@@ -55,7 +55,7 @@ def create_pire_table():
 def create_diac_table():
     with open('res/convert_table.json', 'r', encoding='utf-8') as file:
         data = load(file)
-    return {k: v for k, v in sorted(data.items(), key=lambda x: len(x[0]))}
+    return {k: v for k, v in sorted(data.items(), key=lambda x: len(x[0]), reverse=True)}
 
 
 def lumiere_number(arabic):
