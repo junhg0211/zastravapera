@@ -19,3 +19,35 @@ options:
   -o OVERRIDE, --override OVERRIDE
                         const를 override합니다. `key=value`의 형태로 입력합니다.
 ```
+
+## /diac 사용법
+
+/diac 명령어는 키보드에서 입력 가능한 ASCII 문자들로 이루어진 문자열을
+여러가지 다이어크리틱을 포함한 문자열로 바꿔주는 명령어입니다.
+사용되는 기호들의 의미는 다음과 같습니다.
+
+| 기호  | 의미                |
+|-----|-------------------|
+| !   | without           |
+| ''  | acute             |
+| "   | trema             |
+| '   | acute             |
+| -   | macron            |
+| .   | dot above         |
+| /   | stroke / slash    |
+| :   | trema             |
+| ;   | escape / ligature |
+| ;o  | ring above        |
+| ;u  | breve             |
+| ;v  | caron             |
+| ^   | circumflex        |
+| ``  | double grave      |
+| ~   | tilde             |
+
+변환의 예시는 다음과 같습니다.
+
+| 입력한 문자열            | 변환 결과             |
+|--------------------|-------------------|
+| `t;bows/od!i,c`    | `t͡sødıç`         |
+| `Zasospik'ekomkos` | `Zasospikékomkos` |
+| `'A~N^I;VS/K:A`    | `ÁÑÎŠꝀÄ`          |
