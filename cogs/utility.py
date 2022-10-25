@@ -743,6 +743,8 @@ class UtilityCog(Cog):
     async def diac(self, ctx: SlashContext, string: str):
         for key, value in DIAC_CONVERT_TABLE.items():
             string = string.replace(key, value)
+            if key.islower():
+                string = string.replace(key.upper(), value.upper())
         await ctx.send(string)
 
 
