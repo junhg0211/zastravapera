@@ -2,6 +2,7 @@ import re
 from asyncio import sleep
 from copy import copy
 from datetime import datetime
+from json import load
 from random import choice, randint
 from typing import Optional, Dict, List
 from urllib import parse
@@ -51,6 +52,12 @@ def create_pire_table():
     return result
 
 
+def create_diac_table():
+    with open('res/convert_table.json', 'r', encoding='utf-8') as file:
+        data = load(file)
+    return {k: v for k, v in sorted(data.items(), key=lambda x: len(x[0]))}
+
+
 def lumiere_number(arabic):
     number_define = ['za', 'ho', 'san', 'ni', 'chi', 'la', 'pi', 'kan', 'kain', 'laio']
     result = ''
@@ -77,6 +84,7 @@ def merge_changes(change1, change2):
 
 
 PIPERE_CONVERT_TABLE = create_pire_table()
+DIAC_CONVERT_TABLE = create_diac_table()
 
 
 class UtilityCog(Cog):
@@ -719,6 +727,23 @@ class UtilityCog(Cog):
 
         result = papago.translate(sentence, from_language, to_language)
         await ctx.send(f'번역문\n> {sentence}\n번역 결과\n> {result}')
+
+    @cog_ext.cog_slash(
+        description='다이어크리틱을 포함한 문자열을 출력합니다.',
+        guild_ids=guild_ids,
+        options=[
+            create_option(
+                name='string',
+                description='변환할 문자열을 입력합니다.',
+                option_type=SlashCommandOptionType.STRING,
+                required=True
+            )
+        ]
+    )
+    async def diac(self, ctx: SlashContext, string: str):
+        for key, value in DIAC_CONVERT_TABLE.items():
+            string = string.replace(key, value)
+        await ctx.send(string)
 
 
 def setup(bot: Bot):
