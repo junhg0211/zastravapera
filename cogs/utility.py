@@ -37,7 +37,7 @@ DICE_RE = re.compile(r'(\d+)[dD](\d+)([+\-]\d+)?')
 guild_ids = get_programwide('guild_ids')
 
 
-def create_convert_table():
+def create_pire_table():
     pipere_rome = 'ABCDEFGHIKLMNOPQRSTVUZ'
     pipere_gree = 'ΑΒΨΔΕΦΓΗΙΚΛΜΝΟΠϘΡΣΤѶΥΖ'
 
@@ -76,7 +76,7 @@ def merge_changes(change1, change2):
     ]
 
 
-PIPERE_CONVERT_TABLE = create_convert_table()
+PIPERE_CONVERT_TABLE = create_pire_table()
 
 
 class UtilityCog(Cog):
