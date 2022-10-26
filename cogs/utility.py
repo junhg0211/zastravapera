@@ -4,22 +4,18 @@ from copy import copy
 from datetime import datetime
 from json import load
 from random import choice, randint
-from typing import Optional, Dict, List
-from urllib import parse
+from typing import Dict, List
 
 import requests
-from discord import Embed, TextChannel
-from discord.ext import tasks
+from discord import Embed
 from discord.ext.commands import Cog, Bot
 from discord_slash import cog_ext, SlashContext, SlashCommandOptionType
 from discord_slash.utils.manage_commands import create_option
 from sat_datetime import SatDatetime, SatTimedelta
 
 from const import get_const, get_secret
-from util import get_programwide, jwiki, papago
+from util import get_programwide, papago
 from util.thravelemeh import WordGenerator
-
-RECENT_CHANGE_DURATION = 5 * 60
 
 TRANSLATABLE_TABLE = {
     'ko': ['en', 'ja', 'zh-CN', 'zh-TW', 'es', 'fr', 'ru', 'vi', 'th', 'id', 'de', 'it'],
@@ -91,84 +87,10 @@ class UtilityCog(Cog):
     def __init__(self, bot: Bot):
         self.bot = bot
 
-        self.main_channel: Optional[TextChannel] = None
-
-        self.last_recent_changes = datetime.now()
-        self.track_recent_changes.start()
-
         self.changes: Dict[str, List[int, int, str]] = dict()
 
     def cog_unload(self):
         pass
-
-    # noinspection PyTypeChecker
-    async def recent_changes(self, ctx: Optional[SlashContext], channel: TextChannel):
-        send = (channel if ctx is None else ctx).send
-
-        changes = jwiki.get_recent_changes(from_=self.last_recent_changes)['rss']['channel']
-
-        converted: Dict[str, List[int, int, str]] = dict()
-        if 'item' in changes:
-            changes = changes['item']
-            if isinstance(changes, dict):
-                changes = [changes]
-            for change in changes:
-                await sleep(0)
-
-                parsed = parse.parse_qs(parse.urlsplit(change['link']).query)
-                if 'title' not in parsed:
-                    continue
-
-                title = parsed['title'][0]
-                diff = int(parsed['diff'][0])
-                oldid = int(parsed['oldid'][0])
-                if title in converted:
-                    converted[title] = merge_changes(converted[title], [oldid, diff, [change['dc:creator']]])
-                else:
-                    converted[title] = [oldid, diff, [change['dc:creator']]]
-
-        result = dict()
-        for title, previous_change in list(self.changes.items()):
-            if title in converted:
-                self.changes[title] = merge_changes(previous_change, converted[title])
-            else:
-                result[title] = previous_change
-                del self.changes[title]
-        for title, change in converted.items():
-            if title not in self.changes:
-                self.changes[title] = change
-
-        if result:
-            embed = Embed(title='최근 변경된 문서', color=get_const('sat_color'))
-            for title, (oldid, diff, creator) in result.items():
-                embed.add_field(
-                    name=title.replace('_', ' '),
-                    value=f'__{"__, __".join(creator)}__님이 [수정](http://wiki.shtelo.org/index.php?'
-                          f'title={title.replace(" ", "_")}&oldid={oldid}&diff={diff})함.'
-                )
-            await send(embed=embed)
-
-        self.last_recent_changes = datetime.now()
-
-    @tasks.loop(seconds=RECENT_CHANGE_DURATION)
-    async def track_recent_changes(self):
-        """ 광부위키 최근 변경 사항을 채팅 채널에 전송합니다. """
-
-        while self.main_channel is None:
-            self.main_channel = self.bot.get_channel(get_const('changes_channel_id'))
-            await sleep(1)
-
-        await self.recent_changes(None, self.main_channel)
-
-    @cog_ext.cog_slash(
-        name='recent',
-        description='최근 발생한 사트 변경 사항을 채팅 채널에 전송합니다.',
-        guild_ids=guild_ids
-    )
-    async def recent(self, ctx: SlashContext):
-        """ 최근 발생한 사트 변경 사항을 채팅 채널에 전송합니다. """
-
-        await self.recent_changes(ctx, ctx.channel)
 
     @cog_ext.cog_slash(
         name='word',
