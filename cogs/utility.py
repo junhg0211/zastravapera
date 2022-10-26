@@ -4,10 +4,10 @@ from copy import copy
 from datetime import datetime
 from json import load
 from random import choice, randint
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 import requests
-from discord import Embed
+from discord import Embed, TextChannel
 from discord.ext.commands import Cog, Bot
 from discord_slash import cog_ext, SlashContext, SlashCommandOptionType
 from discord_slash.utils.manage_commands import create_option
@@ -89,8 +89,18 @@ class UtilityCog(Cog):
 
         self.changes: Dict[str, List[int, int, str]] = dict()
 
+        self.log_channel: Optional[TextChannel] = None
+
     def cog_unload(self):
         pass
+
+    @Cog.listener()
+    async def on_ready(self):
+        while self.log_channel is None:
+            await sleep(1)
+            self.log_channel = self.bot.get_channel(get_const('changes_channel_id'))
+
+        await self.log_channel.send(f':tools: {self.bot.user.mention}가 시작되었습니다. ({datetime.now()})')
 
     @cog_ext.cog_slash(
         name='word',
