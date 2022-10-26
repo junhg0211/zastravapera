@@ -278,16 +278,16 @@ class UtilityCog(Cog):
             ),
         ]
     )
-    async def zacalen(self, ctx: SlashContext, year: int = 0, month: int = 0, day: int = 0,
-                      hour: int = 0, minute: int = 0, second: float = 0.0):
+    async def zacalen(self, ctx: SlashContext, year: int = -1, month: int = -1, day: int = -1,
+                      hour: int = -1, minute: int = -1, second: float = -1.0):
         now = datetime.now()
         now = datetime(
-            year if year else now.year,
-            month if month else now.month,
-            day if day else now.day,
-            hour if hour else now.hour,
-            minute if minute else now.minute,
-            second if second else now.second
+            year if year != -1 else now.year,
+            month if month != -1 else now.month,
+            day if day != -1 else now.day,
+            hour if hour != -1 else now.hour,
+            minute if minute != -1 else now.minute,
+            second if second != -1 else now.second
         )
         sat_datetime = SatDatetime.get_from_datetime(now)
         await ctx.send(f'> 서력 {now.year}년 {now.month}월 {now.day}일 {now.hour}시 {now.minute}분 {now.second}초 (UTC)는\n'
@@ -336,16 +336,16 @@ class UtilityCog(Cog):
             ),
         ]
     )
-    async def khorcalen(self, ctx: SlashContext, year: int = 0, month: int = 0, day: int = 0,
-                        hour: int = 0, minute: int = 0, second: float = 0.0):
+    async def khorcalen(self, ctx: SlashContext, year: int = -1, month: int = -1, day: int = -1,
+                        hour: int = -1, minute: int = -1, second: float = -1.0):
         now = datetime.now()
         now = datetime(
-            year if year else now.year,
-            month if month else now.month,
-            day if day else now.day,
-            hour if hour else now.hour,
-            minute if minute else now.minute,
-            second if second else now.second
+            year if year != -1 else now.year,
+            month if month != -1 else now.month,
+            day if day != -1 else now.day,
+            hour if hour != -1 else now.hour,
+            minute if minute != -1 else now.minute,
+            second if second != -1 else now.second
         )
         sat_datetime = SatDatetime.get_from_datetime(now) - SatTimedelta(years=3276)
         await ctx.send(f'> 서력 {now.year}년 {now.month}월 {now.day}일 {now.hour}시 {now.minute}분 {now.second}초 (UTC)는\n'
@@ -595,16 +595,16 @@ class UtilityCog(Cog):
             ),
         ]
     )
-    async def lusicalen(self, ctx: SlashContext, year: int = 0, month: int = 0, day: int = 0,
-                        hour: int = 0, minute: int = 0, second: float = 0.0):
+    async def lusicalen(self, ctx: SlashContext, year: int = -1, month: int = -1, day: int = -1,
+                        hour: int = -1, minute: int = -1, second: float = -1.0):
         earth_now = datetime.now()
         earth_now = datetime(
-            year if year else earth_now.year,
-            month if month else earth_now.month,
-            day if day else earth_now.day,
-            hour if hour else earth_now.hour,
-            minute if minute else earth_now.minute,
-            second if second else earth_now.second
+            year if year != -1 else earth_now.year,
+            month if month != -1 else earth_now.month,
+            day if day != -1 else earth_now.day,
+            hour if hour != -1 else earth_now.hour,
+            minute if minute != -1 else earth_now.minute,
+            second if second != -1 else earth_now.second
         )
         zasokese_year = SatDatetime.get_from_datetime(earth_now).get_on_year()
         hanka_year = zasokese_year + 8191.5
