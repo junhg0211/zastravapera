@@ -686,12 +686,13 @@ class UtilityCog(Cog):
             create_option(
                 name='snowflake',
                 description='snowflake를 입력합니다.',
-                option_type=SlashCommandOptionType.INTEGER,
+                option_type=SlashCommandOptionType.STRING,
                 required=True
             )
         ]
     )
-    async def snow(self, ctx: SlashContext, snowflake: int):
+    async def snow(self, ctx: SlashContext, snowflake: str):
+        snowflake = int(snowflake)
         time = datetime.fromtimestamp(((snowflake >> 22) + 1420070400000) / 1000)
         worker_id = (snowflake >> 17) & 0x1F
         process_id = (snowflake >> 12) & 0x1F
