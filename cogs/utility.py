@@ -679,6 +679,33 @@ class UtilityCog(Cog):
                 string = string.replace(key.upper(), value.upper())
         await ctx.send(string)
 
+    @cog_ext.cog_slash(
+        description='디스코드 snowflake로 정보를 알아냅니다',
+        guild_ids=guild_ids,
+        options=[
+            create_option(
+                name='snowflake',
+                description='snowflake를 입력합니다.',
+                option_type=SlashCommandOptionType.STRING,
+                required=True
+            )
+        ]
+    )
+    async def snow(self, ctx: SlashContext, snowflake: str):
+        snowflake = int(snowflake)
+        time = datetime.fromtimestamp(((snowflake >> 22) + 1420070400000) / 1000)
+        worker_id = (snowflake >> 17) & 0x1F
+        process_id = (snowflake >> 12) & 0x1F
+        increment = snowflake & 0xFFF
+
+        embed = Embed(title='Snowflake 정보', description=f'`{snowflake}`')
+        embed.add_field(name='생성 시간', value=str(time))
+        embed.add_field(name='Worker ID', value=str(worker_id))
+        embed.add_field(name='Process ID', value=str(process_id))
+        embed.add_field(name='Increment', value=str(increment))
+
+        await ctx.send(embed=embed)
+
 
 def setup(bot: Bot):
     bot.add_cog(UtilityCog(bot))
