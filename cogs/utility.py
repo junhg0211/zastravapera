@@ -699,7 +699,7 @@ class UtilityCog(Cog):
         increment = snowflake & 0xFFF
 
         embed = Embed(title='Snowflake 정보', description=f'`{snowflake}`')
-        embed.add_field(name='생성 시간', value=str(time))
+        embed.add_field(name='생성 시간', value=str(time), inline=False)
         embed.add_field(name='Worker ID', value=str(worker_id))
         embed.add_field(name='Process ID', value=str(process_id))
         embed.add_field(name='Increment', value=str(increment))
