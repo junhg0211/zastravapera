@@ -6,7 +6,7 @@ from discord_slash import SlashContext, cog_ext, SlashCommandOptionType
 from discord_slash.utils.manage_commands import create_option
 
 from const import get_const
-from database import Database, DialectDatabase, PosDatabase
+from database import Database, DialectDatabase, PosDatabase, SimpleDatabase
 from database.arteut import ArteutWord
 from database.enjie import EnjieDatabase
 from database.felinkia import FelinkiaWord
@@ -30,7 +30,8 @@ databases = {
     'iremna': Database(IremnaWord, 'iremna_database', 0),
     'arteut': Database(ArteutWord, 'arteut_database', 0),
     'enjie': EnjieDatabase('enjie_database'),
-    'mikhoros': Database(MikhorosWord, 'mikhoros_database')
+    'mikhoros': Database(MikhorosWord, 'mikhoros_database'),
+    'pain': SimpleDatabase('liki_database'),
 }
 
 guild_ids = get_programwide('guild_ids')
@@ -365,6 +366,25 @@ class DictionaryCog(Cog):
             title=f'`{query}`의 검색 결과',
             description='미코로스 아케뒤 단어를 검색합니다.',
             color=get_const('mikhoros_color')
+        ), query)
+
+    @cog_ext.cog_slash(
+        description='파인어 단어를 검색합니다.',
+        guild_ids=guild_ids,
+        options=[
+            create_option(
+                name='query',
+                description='검색할 단어',
+                required=True,
+                option_type=SlashCommandOptionType.STRING
+            )
+        ]
+    )
+    async def pain(self, ctx: SlashContext, query: str):
+        await handle_dictionary(ctx, databases['pain'], Embed(
+            title=f'`{query}`의 검색 결과',
+            description='파인어 단어를 검색합니다.',
+            color=get_const('fliosen_color')
         ), query)
 
     @cog_ext.cog_slash(

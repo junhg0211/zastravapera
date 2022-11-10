@@ -1,6 +1,6 @@
 import re
 from datetime import datetime, timedelta
-from typing import Type, Tuple, List, Callable
+from typing import Type, Tuple, List, Callable, Union
 
 import gspread
 from discord import Embed
@@ -107,6 +107,42 @@ class DialectDatabase(Database):
         return self
 
 
+class SimpleWord(Word):
+    def __init__(self, word: str, meaning: str, note: str = ''):
+        super().__init__(word)
+        self.meaning = meaning
+        self.note = note
+
+    def get_field_name(self, special: bool) -> str:
+        return (f'**{self.word}**' if not special else f'__**{self.word}** (일치)__') \
+               + (f' [{self.note}]' if self.note else '')
+
+    def get_field_value(self) -> str:
+        return self.meaning
+
+
+class SimpleDatabase(Database):
+    def __init__(self, spreadsheet_key: str, sheet_number: int = 0,
+                 word_column: int = 0, meaning_column: int = 1, note_column: int = -1):
+        super().__init__(SimpleWord, spreadsheet_key, sheet_number)
+        self.word_column = word_column
+        self.meaning_column = meaning_column
+        self.note_column = note_column
+
+    def is_duplicate(self, query: str, row: list) -> bool:
+        return normalise(query) == row[self.word_column] \
+               or normalise(query) in re.split(r'[,;] ', normalise(row[self.meaning_column]))
+
+    def row_appending(self, rows_list, row):
+        # noinspection PyArgumentList
+        rows_list.append(self.word_class(
+            row[self.word_column], row[self.meaning_column],
+            '' if self.note_column == -1 else row[self.note_column]))
+
+    def search_rows(self, query: str) -> Tuple[List[Word], set, bool]:
+        return search_rows(self, query)
+
+
 class PosWord(Word):
     def __init__(self, word: str, pos: str, meaning: str, note: str = ''):
         super().__init__(word)
@@ -142,20 +178,24 @@ class PosDatabase(Database):
             '' if self.note_column == -1 else row[self.note_column]))
 
     def search_rows(self, query: str) -> Tuple[List[Word], set, bool]:
-        reloaded = False
-        if self.last_reload + timedelta(weeks=1) < datetime.now():
-            self.reload()
-            reloaded = True
-        duplicates = set()
-        rows = list()
-        for j, row in enumerate(self.sheet_values):
-            if normalise(query) in normalise(row[self.word_column]) \
-                    or normalise(query) in normalise(row[self.meaning_column]):
-                # noinspection PyArgumentList
-                self.row_appending(rows, row)
-            if self.is_duplicate(query, row):
-                duplicates.add(len(rows) - 1)
-        return rows, duplicates, reloaded
+        return search_rows(self, query)
+
+
+def search_rows(database: Union[SimpleDatabase, PosDatabase], query: str):
+    reloaded = False
+    if database.last_reload + timedelta(weeks=1) < datetime.now():
+        database.reload()
+        reloaded = True
+    duplicates = set()
+    rows = list()
+    for j, row in enumerate(database.sheet_values):
+        if normalise(query) in normalise(row[database.word_column]) \
+                or normalise(query) in normalise(row[database.meaning_column]):
+            # noinspection PyArgumentList
+            database.row_appending(rows, row)
+        if database.is_duplicate(query, row):
+            duplicates.add(len(rows) - 1)
+    return rows, duplicates, reloaded
 
 
 if __name__ == '__main__':
