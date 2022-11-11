@@ -2,6 +2,7 @@ from database import Word
 
 
 class FsovmWord(Word):
+    back_slice = 1
 
     def __init__(self, word: str, noun: str, adjective: str, verb: str, adverb: str, postpos: str, int):
         super().__init__(word)

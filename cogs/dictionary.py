@@ -397,7 +397,7 @@ class DictionaryCog(Cog):
                 name='query',
                 description='검색할 단어',
                 required=True,
-                option_type=3
+                option_type=SlashCommandOptionType.STRING
             )
         ]
     )
