@@ -2,12 +2,13 @@ from database import Word
 
 
 class FsovmWord(Word):
-    def __init__(self, word: str, noun: str, adjective: str, verb: str, adverb: str, postpos: str, interj):
+    # def __init__(self, word: str, noun: str, adjective: str, verb: str, adverb: str, postpos: str, interj):
+    def __init__(self, word: str, noun: str, adjective: str, verb: str, postpos: str, interj):
         super().__init__(word)
         self.noun = noun
         self.adjective = adjective
         self.verb = verb
-        self.adverb = adverb
+        # self.adverb = adverb
         self.postpos = postpos
         self.interj = interj
 
@@ -19,8 +20,8 @@ class FsovmWord(Word):
             definitions.append(f'형: {self.adjective}')
         if self.verb:
             definitions.append(f'동: {self.verb}')
-        if self.adverb:
-            definitions.append(f'부: {self.adverb}')
+        # if self.adverb:
+        #     definitions.append(f'부: {self.adverb}')
         if self.postpos:
             definitions.append(f'조 {self.postpos}')
         if self.interj:
