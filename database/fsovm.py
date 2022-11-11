@@ -3,7 +3,7 @@ from database import Word
 
 class FsovmWord(Word):
     def __init__(self, word: str, noun: str, adjective: str, verb: str, adverb: str, postpos: str, interj):
-        super().init(word)
+        super().__init__(word)
         self.noun = noun
         self.adjective = adjective
         self.verb = verb
