@@ -15,6 +15,7 @@ from database.iremna import IremnaWord
 from database.mikhoros import MikhorosWord
 from database.sesame import SesameWord
 from database.zasok import ZasokeseWord, BerquamWord
+from database.fsovm import FsovmWord
 from util import get_programwide
 from util.simetasis import zasokese_to_simetasise
 
@@ -32,6 +33,7 @@ databases = {
     'enjie': EnjieDatabase('enjie_database'),
     'mikhoros': Database(MikhorosWord, 'mikhoros_database'),
     'pain': SimpleDatabase('liki_database'),
+    'fsovm': Database(FsovmWord, 'fsovm_database')
 }
 
 guild_ids = get_programwide('guild_ids')
@@ -385,6 +387,25 @@ class DictionaryCog(Cog):
             title=f'`{query}`의 검색 결과',
             description='파인어 단어를 검색합니다.',
             color=get_const('fliosen_color')
+        ), query)
+
+    @cog_ext.cog_slash(
+        description='프소븜어 단어를 검색합니다.',
+        guild_ids=guild_ids,
+        options=[
+            create_option(
+                name='query',
+                description='검색할 단어',
+                required=True,
+                option_type=3
+            )
+        ]
+    )
+    async def fsovm(self, ctx: SlashContext, query: str):
+        await handle_dictionary(ctx, databases['fsovm'], Embed(
+            title=f'`{query}`의 검색 결과',
+            description='프소븜어 단어를 검색합니다.',
+            color=get_const('tinudanma_color')
         ), query)
 
     @cog_ext.cog_slash(
