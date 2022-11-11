@@ -2,16 +2,14 @@ from database import Word
 
 
 class FsovmWord(Word):
-    back_slice = 1
-
-    def __init__(self, word: str, noun: str, adjective: str, verb: str, adverb: str, postpos: str, int):
-        super().__init__(word)
+    def __init__(self, word: str, noun: str, adjective: str, verb: str, adverb: str, postpos: str, interj):
+        super().init(word)
         self.noun = noun
         self.adjective = adjective
         self.verb = verb
         self.adverb = adverb
         self.postpos = postpos
-        self.int = int
+        self.interj = interj
 
     def get_field_value(self) -> str:
         definitions = list()
@@ -25,6 +23,6 @@ class FsovmWord(Word):
             definitions.append(f'부: {self.adverb}')
         if self.postpos:
             definitions.append(f'조 {self.postpos}')
-        if self.int:
-            definitions.append(f'감 {self.int}')
+        if self.interj:
+            definitions.append(f'감 {self.interj}')
         return '\n'.join(definitions)
