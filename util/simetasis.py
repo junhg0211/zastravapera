@@ -15,8 +15,10 @@ def zasokese_to_simetasise(sentence: str) -> str:
             punctuation = word[-1] + punctuation
             word = word[:-1]
 
+        word = word.replace('x', 'sh')
         word = word.replace('y', 'ú').replace('j', 'y').replace('ÿ', 'yú')
         word = word.replace('c', 'ch')
+
         if word.endswith('que'):
             word = word[:-3] + 'c'
         if word.endswith('iê'):
