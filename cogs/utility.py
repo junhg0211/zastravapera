@@ -180,7 +180,7 @@ class UtilityCog(Cog):
         embed.add_field(name='단어 목록', value='\n'.join(words))
 
         await message.edit(embed=embed, content='')
-    
+
     @cog_ext.cog_slash(
         name='thconverht',
         guild_ids=guild_ids,
@@ -201,10 +201,9 @@ class UtilityCog(Cog):
         ]
     )
     async def thconverht(self, ctx: SlashContext, word: str, countable: bool = True):
-        
         message = await ctx.send('단어 생성중입니다...')
         reversed_ = word[::-1]
-        
+
         reversed_ = reversed_.replace('x', 'z')
         reversed_ = reversed_.replace('w', 'u')
         reversed_ = reversed_.replace('y', 'i')
@@ -221,16 +220,16 @@ class UtilityCog(Cog):
             if l in pool.sons and i + offset + 1 < len(reversed_) and reversed_[i + offset + 1] not in pool.mothers and l not in pool.lmnhs:
                 reversed_ = reversed_[:i + offset + 1] + 'h' + reversed_[i + offset + 1:]
                 offset += 1
-        
+
         if not countable:
             reversed_ += 'h'
-        
+
         if reversed_[-1] == 'h' and reversed_[-2] in pool.mothers:
             reversed_ += 'h'
 
         if reversed_[-1] in pool.last_unlocatable:
             reversed_ += 'a'
-        
+
         reversed_ = reversed_.replace('ia', 'ya')
         reversed_ = reversed_.replace('ie', 'ye')
         reversed_ = reversed_.replace('io', 'yo')
@@ -247,7 +246,7 @@ class UtilityCog(Cog):
                 reversed_ = 'j' + reversed_
             if len(reversed_) == 6:
                 reversed_ = 'q' + reversed_
-                
+
         embed = Embed(
             title='변환된 단어',
             color=get_const('hemelvaarht_hx_nerhgh')
