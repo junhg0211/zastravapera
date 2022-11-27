@@ -15,7 +15,7 @@ from sat_datetime import SatDatetime, SatTimedelta
 
 from const import get_const, get_secret
 from util import get_programwide, papago
-from util.thravelemeh import WordGenerator
+from util.thravelemeh import WordGenerator, pool
 
 TRANSLATABLE_TABLE = {
     'ko': ['en', 'ja', 'zh-CN', 'zh-TW', 'es', 'fr', 'ru', 'vi', 'th', 'id', 'de', 'it'],
@@ -178,6 +178,81 @@ class UtilityCog(Cog):
             color=get_const('hemelvaarht_hx_nerhgh')
         )
         embed.add_field(name='단어 목록', value='\n'.join(words))
+
+        await message.edit(embed=embed, content='')
+    
+    @cog_ext.cog_slash(
+        name='thconverht',
+        guild_ids=guild_ids,
+        description='입력한 영단어를 트라벨레메식으로 변환합니다.',
+        options=[
+            create_option(
+                name='word',
+                description='변환할 영단어를 입력합니다.',
+                option_type=SlashCommandOptionType.STRING,
+                required=True
+            ),
+            create_option(
+                name='countable',
+                description='가산명사, 혹은 본동사인지 확인합니다.',
+                option_type=SlashCommandOptionType.BOOLEAN,
+                required=True
+            )
+        ]
+    )
+    async def thconverht(self, ctx: SlashContext, word: str, countable: bool = True):
+        
+        message = await ctx.send('단어 생성중입니다...')
+        reversed_ = word[::-1]
+        
+        reversed_ = reversed_.replace('x', 'z')
+        reversed_ = reversed_.replace('w', 'u')
+        reversed_ = reversed_.replace('y', 'i')
+
+        reversed_ = reversed_.replace('cc', 'c')
+        reversed_ = reversed_.replace('dd', 'd')
+        reversed_ = reversed_.replace('ll', 'l')
+        reversed_ = reversed_.replace('oo', 'aa')
+        reversed_ = reversed_.replace('rr', 'r')
+        reversed_ = reversed_.replace('tt', 't')
+
+        offset = 0
+        for i, l in enumerate(reversed_):
+            if l in pool.sons and i + offset + 1 < len(reversed_) and reversed_[i + offset + 1] not in pool.mothers and l not in pool.lmnhs:
+                reversed_ = reversed_[:i + offset + 1] + 'h' + reversed_[i + offset + 1:]
+                offset += 1
+        
+        if not countable:
+            reversed_ += 'h'
+        
+        if reversed_[-1] == 'h' and reversed_[-2] in pool.mothers:
+            reversed_ += 'h'
+
+        if reversed_[-1] in pool.last_unlocatable:
+            reversed_ += 'a'
+        
+        reversed_ = reversed_.replace('ia', 'ya')
+        reversed_ = reversed_.replace('ie', 'ye')
+        reversed_ = reversed_.replace('io', 'yo')
+        reversed_ = reversed_.replace('iu', 'yu')
+
+        reversed_ = reversed_.replace('ua', 'wa')
+        reversed_ = reversed_.replace('ue', 'we')
+        reversed_ = reversed_.replace('ui', 'wi')
+
+        if reversed_[0] in pool.mothers_with_h:
+            if len(reversed_) == 2:
+                reversed_ = 'v' + reversed_
+            if len(reversed_) == 4:
+                reversed_ = 'j' + reversed_
+            if len(reversed_) == 6:
+                reversed_ = 'q' + reversed_
+                
+        embed = Embed(
+            title='변환된 단어',
+            color=get_const('hemelvaarht_hx_nerhgh')
+        )
+        embed.add_field(name=f'원래 단어: {word}', value=reversed_)
 
         await message.edit(embed=embed, content='')
 
