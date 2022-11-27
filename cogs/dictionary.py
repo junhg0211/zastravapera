@@ -435,6 +435,28 @@ class DictionaryCog(Cog):
                 await sleep(0)
         await message.edit(content=f'{f"`{language}` " if language else ""}데이터베이스를 다시 불러왔습니다.')
 
+    @cog_ext.cog_slash(
+        description='사전 링크를 알려줍니다.',
+        guild_ids=guild_ids,
+        options=[
+            create_option(
+                name='language',
+                description='데이터베이스 링크를 확인할 언어를 설정합니다.',
+                required=True,
+                option_type=SlashCommandOptionType.STRING,
+                choices=list(databases.keys())
+            )
+        ]
+    )
+    async def dictionary(self, ctx: SlashContext, language: str = ''):
+        dictionary_id = get_const(databases[language].spreadsheet_key)
+        link = f'https://docs.google.com/spreadsheets/d/{dictionary_id}/edit#gid=0'
+
+        embed = Embed(title="사전 링크", color=get_const('shtelo_sch_vanilla'))
+        embed.add_field(name=f'`{language}` 사전의 링크', value=f'[여기를 클릭]({link})')
+
+        await ctx.send(embed=embed)
+
 
 def setup(bot: Bot):
     bot.add_cog(DictionaryCog(bot))
