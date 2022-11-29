@@ -33,7 +33,8 @@ databases = {
     'enjie': EnjieDatabase('enjie_database'),
     'mikhoros': Database(MikhorosWord, 'mikhoros_database'),
     'pain': SimpleDatabase('liki_database'),
-    'fsovm': Database(FsovmWord, 'fsovm_database')
+    'fsovm': Database(FsovmWord, 'fsovm_database'),
+    'chrisancthian': PosDatabase('chrisancthian_database', 0, 0, 2, 1, 3)
 }
 
 guild_ids = get_programwide('guild_ids')
@@ -406,6 +407,25 @@ class DictionaryCog(Cog):
             title=f'`{query}`의 검색 결과',
             description='프소븜어 단어를 검색합니다.',
             color=get_const('tinudanma_color')
+        ), query)
+
+    @cog_ext.cog_slash(
+        description='크리상테스어 단어를 검색합니다.',
+        guild_ids=guild_ids,
+        options=[
+            create_option(
+                name='query',
+                description='검색할 단어',
+                required=True,
+                option_type=SlashCommandOptionType.STRING
+            )
+        ]
+    )
+    async def chris(self, ctx: SlashContext, query: str):
+        await handle_dictionary(ctx, databases['chrisancthian'], Embed(
+            title=f'`{query}`의 검색 결과',
+            description='크리상테스어 단어를 검색합니다.',
+            color=get_const('chrisancthian_color')
         ), query)
 
     @cog_ext.cog_slash(
