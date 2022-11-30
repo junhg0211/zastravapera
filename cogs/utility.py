@@ -260,9 +260,7 @@ class UtilityCog(Cog):
         options=[
             create_option(
                 name='spec',
-                description='굴림의 타입을 결정합니다. `{}`의 형태로 입력합니다. '
-                            '기본값은 `1d6`입니다. (예시: `d6`, `2D20`, `6d10+4`)'
-                            .format(r'(\d+)?[dD](\d+) *([+\-]\d+)?'),
+                description='굴림의 타입을 결정합니다. 기본값은 `1d6`입니다. (예시: `d6`, `2D20`, `6d10+4`)',
                 option_type=3,
                 required=False
             )
