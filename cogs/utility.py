@@ -29,7 +29,7 @@ for tls in TRANSLATABLE_TABLE.values():
         if tl not in TO_LANGUAGES:
             TO_LANGUAGES.append(tl)
 
-DICE_RE = re.compile(r'(\d+)[dD](\d+)([+\-]\d+)?')
+DICE_RE = re.compile(r'(\d+)?[dD](\d+) *([+\-]\d+)?')
 
 guild_ids = get_programwide('guild_ids')
 
@@ -260,15 +260,27 @@ class UtilityCog(Cog):
         options=[
             create_option(
                 name='spec',
-                description='굴림의 타입을 결정합니다. `(\\d+)[dD](\\d+)([+\\-]\\d+)?`의 형태로 입력합니다. '
-                            '기본값은 `1d6`입니다. (예시: `1d6`, `2D20`, `6d10+4`)',
+                description='굴림의 타입을 결정합니다. `{}`의 형태로 입력합니다. '
+                            '기본값은 `1d6`입니다. (예시: `d6`, `2D20`, `6d10+4`)'
+                            .format(r'(\d+)?[dD](\d+) *([+\-]\d+)?'),
                 option_type=3,
                 required=False
             )
         ]
     )
     async def dice(self, ctx: SlashContext, spec: str = '1d6'):
-        count, dice_type, delta = map(lambda x: int(x) if x else 0, DICE_RE.findall(spec)[0])
+        matching = DICE_RE.findall(spec)
+
+        if len(matching) < 1:
+            await ctx.send(
+                '주사위 형태가 올바르지 않습니다! `{}` 형식을 만족하는 주사위만 사용할 수 있습니다. (예시: `d6`, `2D20`, `6d10+4`)'
+                .format(r'`(\d+)?[dD](\d+) *([+\-]\d+)?`'))
+            return
+
+        dice = matching[0]
+        count = int(dice[0]) if dice[0] else 1
+        dice_type = int(dice[1]) if dice[1] else 6
+        delta = int(dice[2]) if dice[2] else 0
 
         numbers = list()
         sum_ = 0
