@@ -280,6 +280,10 @@ class UtilityCog(Cog):
         dice_type = int(dice[1]) if dice[1] else 6
         delta = int(dice[2]) if dice[2] else 0
 
+        if count > 100:
+            await ctx.send(f'주사위는 100개까지만 굴릴 수 있습니다. ({count}개 굴리기 시도함)')
+            return
+
         numbers = list()
         sum_ = 0
         for _ in range(count):
