@@ -1,7 +1,7 @@
 import re
 from asyncio import sleep
 from copy import copy
-from datetime import datetime
+from datetime import datetime, timedelta
 from json import load
 from random import choice, randint
 from typing import Dict, List, Optional
@@ -311,7 +311,7 @@ class UtilityCog(Cog):
     )
     async def calc(self, ctx: SlashContext, operation: str):
         for letter in operation:
-            if letter not in '0123456789+-*/^(). ':
+            if letter not in '0123456789+-*/^(). =abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ,':
                 await ctx.send('잘못된 수식입니다.')
                 return
 
