@@ -515,16 +515,18 @@ class UtilityCog(Cog):
         ]
     )
     async def gwangbu(self, ctx: SlashContext, query: str):
+        message = await ctx.send('광부위키 문서 검색 중...')
+
         response = requests.get(f'http://wiki.shtelo.org/api.php?action=query&list=search&srsearch={query}&format=json')
         if response.status_code != 200:
-            await ctx.send('광부위키 문서 검색에 실패했습니다.')
+            await message.edit(content='광부위키 문서 검색에 실패했습니다.')
             return
         data = response.json()
         if 'query' not in data or 'search' not in data['query']:
-            await ctx.send('광부위키 문서 검색에 실패했습니다.')
+            await message.edit(content='광부위키 문서 검색에 실패했습니다.')
             return
         if not data['query']['search']:
-            await ctx.send('검색 결과가 없습니다.')
+            await message.edit(content='검색 결과가 없습니다.')
             return
 
         embed = Embed(title=f'`{query}` 광부위키 문서 검색 결과', color=get_const('sat_color'))
@@ -533,7 +535,7 @@ class UtilityCog(Cog):
                 name=result['title'],
                 value=f'[보러 가기](http://wiki.shtelo.org/index.php/{result["title"].replace(" ", "_")})',
                 inline=False)
-        await ctx.send(embed=embed)
+        await message.edit(content=None, embed=embed)
 
     @cog_ext.cog_slash(
         description='여론조사를 실시합니다.',
