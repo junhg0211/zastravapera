@@ -1,4 +1,5 @@
 import re
+from asyncio import sleep
 from datetime import datetime, timedelta
 from typing import Type, Tuple, List, Callable, Union
 
@@ -66,7 +67,7 @@ class Database:
         self.sheet.insert_row(values, index=2)
         self.reload()
 
-    def search_rows(self, query: str) -> Tuple[List[Word], set, bool]:
+    async def search_rows(self, query: str) -> Tuple[List[Word], set, bool]:
         """
         rows: 단어 목록
 
@@ -84,6 +85,7 @@ class Database:
         duplicates = set()
         rows = list()
         for j, row in enumerate(self.sheet_values):
+            await sleep(0)
             for i, column in enumerate(row[:-self.word_class.back_slice] if self.word_class.back_slice else row):
                 if normalise(query) in normalise(column):
                     # noinspection PyArgumentList

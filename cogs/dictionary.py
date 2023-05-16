@@ -51,7 +51,7 @@ async def handle_dictionary(ctx: SlashContext, database: Database, embed: Embed,
     """
     message = await ctx.send(f'`{query}`에 대해 검색 중입니다…')
 
-    words, duplicates, reloaded = database.search_rows(query)
+    words, duplicates, reloaded = await database.search_rows(query)
     too_many = False
     if (word_count := len(words)) > 25:
         too_many = True
