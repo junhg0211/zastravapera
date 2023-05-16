@@ -1,16 +1,16 @@
 import re
 from asyncio import sleep
 from copy import copy
-from datetime import datetime, timedelta
-from json import load
+from datetime import datetime
+from json import load, JSONDecodeError
 from random import choice, randint
 from typing import Dict, List, Optional
 
-import requests
 from discord import Embed, TextChannel
 from discord.ext.commands import Cog, Bot
 from discord_slash import cog_ext, SlashContext, SlashCommandOptionType
 from discord_slash.utils.manage_commands import create_option
+from http3 import AsyncClient
 from sat_datetime import SatDatetime, SatTimedelta
 
 from const import get_const, get_secret
@@ -217,7 +217,10 @@ class UtilityCog(Cog):
 
         offset = 0
         for i, l in enumerate(reversed_):
-            if l in pool.sons and i + offset + 1 < len(reversed_) and reversed_[i + offset + 1] not in pool.mothers and l not in pool.lmnhs:
+            if l in pool.sons \
+                    and i + offset + 1 < len(reversed_) \
+                    and reversed_[i + offset + 1] not in pool.mothers \
+                    and l not in pool.lmnhs:
                 reversed_ = reversed_[:i + offset + 1] + 'h' + reversed_[i + offset + 1:]
                 offset += 1
 
@@ -517,14 +520,19 @@ class UtilityCog(Cog):
     async def gwangbu(self, ctx: SlashContext, query: str):
         message = await ctx.send('광부위키 문서 검색 중...')
 
-        response = requests.get(f'http://wiki.shtelo.org/api.php?action=query&list=search&srsearch={query}&format=json')
+        client = AsyncClient()
+        response = await client.get(
+            f'http://wiki.shtelo.org/api.php?action=query&list=search&srsearch={query}&format=json')
+
         if response.status_code != 200:
             await message.edit(content='광부위키 문서 검색에 실패했습니다.')
             return
+
         data = response.json()
         if 'query' not in data or 'search' not in data['query']:
             await message.edit(content='광부위키 문서 검색에 실패했습니다.')
             return
+
         if not data['query']['search']:
             await message.edit(content='검색 결과가 없습니다.')
             return
@@ -589,12 +597,17 @@ class UtilityCog(Cog):
     async def korean(self, ctx: SlashContext, query: str):
         message = await ctx.send(f'표준국어대사전에서 `{query}` 단어를 검색하는 중입니다…')
 
-        r = requests.get('https://stdict.korean.go.kr/api/search.do',
-                         params={'key': get_secret('korean_dictionary_api_key'), 'q': query, 'req_type': 'json'},
-                         verify=False)
+        client = AsyncClient()
         try:
+            r = await client.get(
+                'https://stdict.korean.go.kr/api/search.do',
+                params={'key': get_secret('korean_dictionary_api_key'), 'q': query, 'req_type': 'json'},
+                verify=False)
             j = r.json()
-        except requests.exceptions.JSONDecodeError:
+        except ConnectionResetError:
+            await message.edit(content=f'`{query}`의 검색결과를 찾을 수 없습니다.')
+            return
+        except JSONDecodeError:
             await message.edit(content=f'`{query}`의 검색결과가 없습니다.')
             return
         else:
