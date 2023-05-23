@@ -1,7 +1,7 @@
 import re
 from asyncio import sleep
 from datetime import datetime, timedelta
-from typing import Type, Tuple, List, Callable, Union
+from typing import Type, Tuple, List, Callable, Union, Any
 
 import gspread
 from discord import Embed
@@ -141,8 +141,8 @@ class SimpleDatabase(Database):
             row[self.word_column], row[self.meaning_column],
             '' if self.note_column == -1 else row[self.note_column]))
 
-    def search_rows(self, query: str) -> Tuple[List[Word], set, bool]:
-        return search_rows(self, query)
+    async def search_rows(self, query: str) -> Tuple[List[Word], set, bool]:
+        return await search_rows(self, query)
 
 
 class PosWord(Word):
@@ -179,11 +179,11 @@ class PosDatabase(Database):
             row[self.word_column], row[self.pos_column], row[self.meaning_column],
             '' if self.note_column == -1 else row[self.note_column]))
 
-    def search_rows(self, query: str) -> Tuple[List[Word], set, bool]:
-        return search_rows(self, query)
+    async def search_rows(self, query: str) -> tuple[list[Any], set[int], bool]:
+        return await search_rows(self, query)
 
 
-def search_rows(database: Union[SimpleDatabase, PosDatabase], query: str):
+async def search_rows(database: Union[SimpleDatabase, PosDatabase], query: str):
     reloaded = False
     if database.last_reload + timedelta(weeks=1) < datetime.now():
         database.reload()
@@ -191,6 +191,7 @@ def search_rows(database: Union[SimpleDatabase, PosDatabase], query: str):
     duplicates = set()
     rows = list()
     for j, row in enumerate(database.sheet_values):
+        await sleep(0)
         if normalise(query) in normalise(row[database.word_column]) \
                 or normalise(query) in normalise(row[database.meaning_column]):
             # noinspection PyArgumentList
