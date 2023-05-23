@@ -1,7 +1,7 @@
 import re
 from asyncio import sleep
 from datetime import datetime, timedelta
-from typing import Type, Tuple, List, Callable, Union, Any
+from typing import Type, Tuple, List, Callable, Union, Any, Set
 
 import gspread
 from discord import Embed
@@ -179,7 +179,7 @@ class PosDatabase(Database):
             row[self.word_column], row[self.pos_column], row[self.meaning_column],
             '' if self.note_column == -1 else row[self.note_column]))
 
-    async def search_rows(self, query: str) -> tuple[list[Any], set[int], bool]:
+    async def search_rows(self, query: str) -> Tuple[List[Any], Set[int], bool]:
         return await search_rows(self, query)
 
 
