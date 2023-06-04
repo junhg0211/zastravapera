@@ -31,7 +31,7 @@ class Word:
         return f'**{self.word}**' if not special else f'__**{self.word}** (일치)__'
 
     def get_field_value(self) -> str:
-        pass
+        raise NotImplementedError
 
 
 class Database:
