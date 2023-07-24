@@ -318,8 +318,14 @@ class UtilityCog(Cog):
                 await ctx.send('잘못된 수식입니다.')
                 return
 
+        if any(word in operation for word in ('help', 'exit', 'quit', 'ctx', 'dir', 'letter', 'operation', 'self')):
+            await ctx.send('잘못된 수식입니다.')
+            return
+
         # noinspection PyBroadException
         try:
+            from math import sin, cos, tan, log, e, pi, factorial, sqrt, asin, acos, atan, sinh, cosh, tanh, asinh, \
+                acosh, atanh, ceil, floor, exp, log10, log2, gcd, hypot, inf, nan
             result = eval(operation)
         except Exception:
             await ctx.send('잘못된 수식입니다.')
