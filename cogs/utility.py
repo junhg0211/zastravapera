@@ -6,7 +6,8 @@ from json import load, JSONDecodeError
 from random import choice, randint
 from typing import Dict, List, Optional
 
-from discord import Embed, TextChannel
+from discord import Embed, TextChannel, VoiceChannel
+from discord.ext import tasks
 from discord.ext.commands import Cog, Bot
 from discord_slash import cog_ext, SlashContext, SlashCommandOptionType
 from discord_slash.utils.manage_commands import create_option
@@ -91,6 +92,8 @@ class UtilityCog(Cog):
 
         self.log_channel: Optional[TextChannel] = None
 
+        self.update_zacalen_channel.start()
+
     def cog_unload(self):
         pass
 
@@ -101,6 +104,19 @@ class UtilityCog(Cog):
             self.log_channel = self.bot.get_channel(get_const('changes_channel_id'))
 
         await self.log_channel.send(f':tools: {self.bot.user.mention}가 시작되었습니다. ({datetime.now()})')
+
+    @tasks.loop(hours=1)
+    async def update_zacalen_channel(self):
+        channel: VoiceChannel = self.bot.get_channel(get_const('zacalen_channel_id'))
+
+        if channel is None:
+            return
+
+        today = datetime.today()
+        zacalen = SatDatetime.get_from_datetime(today)
+        name = f'{today.year:04}-{today.month:02}-{today.day:02} ({"월화수목금토일"[today.weekday()]}): {zacalen.year}년'
+
+        await channel.edit(name=name)
 
     @cog_ext.cog_slash(
         name='word',
