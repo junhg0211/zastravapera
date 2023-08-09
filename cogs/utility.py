@@ -105,11 +105,16 @@ class UtilityCog(Cog):
 
         await self.log_channel.send(f':tools: {self.bot.user.mention}가 시작되었습니다. ({datetime.now()})')
 
+        # zacalen channel
+        await self.update_zacalen_channel()
+
     @tasks.loop(hours=1)
     async def update_zacalen_channel(self):
         channel: VoiceChannel = self.bot.get_channel(get_const('zacalen_channel_id'))
 
         if channel is None:
+            await sleep(1)
+            await self.update_zacalen_channel()
             return
 
         today = datetime.today()
