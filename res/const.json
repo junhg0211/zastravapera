@@ -18,6 +18,7 @@
   "chrisancthian_color": 15583744,
   "scheskatte_color": 3820712,
   "ropona_color": 3831105,
+  "lazha_color": 7711451,
   "zasokese_database": "1QSqIbmShJiUiJWNB0x8dQzGbb6W1dqEz_LBlP363e_E",
   "thravelemeh_database": "1gSENIQvoz725jJ6uuL5-dpVyFRr_PBhSFNdKqBp8vjQ",
   "felinkia_database": "13d_iISHXfLXKyejhEhGyOl_mpuIfKQEyMH4RwweQr2Y",
@@ -32,11 +33,8 @@
   "chrisancthian_database": "1ZpYeXHpvBN8WwSjnHPH4lAqBRl8kfhsVW29WYmQP3lg",
   "scheskatte_database": "1mK7Juzn-G9ZPd1dQJVy6lLrg97e7O1MuKIyq8HkHUQo",
   "ropona_database": "1v4Gn5c1xeTBF5VLdSKdDFF9HtpoIaq5GUJnJyDv_-vo",
-  "guild_ids": [
-    561880172542820353,
-    935817966757478452,
-    758413486899724328
-  ],
+  "lazhon_database": "13dMZm7piiITn27NVE5u0lmDONi6DYa4vMu0LjR0mZRM",
+  "guild_ids": [561880172542820353, 935817966757478452, 758413486899724328],
   "changes_channel_id": 979718873077125230,
   "zacalen_channel_id": 1138825697159286784,
   "sat_guild_id": 935817966757478452

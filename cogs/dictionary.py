@@ -12,6 +12,7 @@ from database.enjie import EnjieDatabase
 from database.felinkia import FelinkiaWord
 from database.hemelvaarht import ThravelemehWord
 from database.iremna import IremnaWord
+from database.lazhon import LazhonWord
 from database.mikhoros import MikhorosWord
 from database.ropona import RoponaDatabase
 from database.sesame import SesameWord
@@ -37,6 +38,7 @@ databases = {
     'chrisancthian': PosDatabase('chrisancthian_database', 0, 0, 2, 1, 3),
     'scheskatte': Database(ZasokeseWord, 'scheskatte_database', 1),
     'ropona': RoponaDatabase("ropona_database"),
+    'lazhon': Database(LazhonWord, 'lazhon_database', 0),
 }
 
 guild_ids = get_programwide('guild_ids')
@@ -70,7 +72,8 @@ async def handle_dictionary(ctx: SlashContext, database: Database, embed: Embed,
     if not words and not index_offset:
         embed.add_field(name='검색 결과', value='검색 결과가 없습니다.')
     if too_many:
-        embed.add_field(name='기타', value=f'단어나 뜻에 `{query}`가 들어가는 단어가 {word_count - index_offset} 개 더 있습니다.')
+        embed.add_field(
+            name='기타', value=f'단어나 뜻에 `{query}`가 들어가는 단어가 {word_count - index_offset} 개 더 있습니다.')
 
     await message.edit(content='데이터베이스를 다시 불러왔습니다.' if reloaded else '', embed=embed)
 
@@ -110,14 +113,22 @@ class DictionaryCog(Cog):
         description='자소크어 단어를 만듭니다.',
         guild_ids=guild_ids,
         options=[
-            create_option('word', '만들 단어', SlashCommandOptionType.STRING, True),
-            create_option('origin_language', '어원 언어', SlashCommandOptionType.STRING, True),
-            create_option('origin_word', '어원', SlashCommandOptionType.STRING, False),
-            create_option('noun', '명사 의미', SlashCommandOptionType.STRING, False),
-            create_option('adjective', '형용사 의미', SlashCommandOptionType.STRING, False),
-            create_option('verb', '동사 의미', SlashCommandOptionType.STRING, False),
-            create_option('adverb', '부사 의미', SlashCommandOptionType.STRING, False),
-            create_option('postposition', '조사 의미', SlashCommandOptionType.STRING, False),
+            create_option('word', '만들 단어',
+                          SlashCommandOptionType.STRING, True),
+            create_option('origin_language', '어원 언어',
+                          SlashCommandOptionType.STRING, True),
+            create_option('origin_word', '어원',
+                          SlashCommandOptionType.STRING, False),
+            create_option('noun', '명사 의미',
+                          SlashCommandOptionType.STRING, False),
+            create_option('adjective', '형용사 의미',
+                          SlashCommandOptionType.STRING, False),
+            create_option('verb', '동사 의미',
+                          SlashCommandOptionType.STRING, False),
+            create_option('adverb', '부사 의미',
+                          SlashCommandOptionType.STRING, False),
+            create_option('postposition', '조사 의미',
+                          SlashCommandOptionType.STRING, False),
             create_option('note', '비고', SlashCommandOptionType.STRING, False),
         ]
     )
@@ -446,6 +457,25 @@ class DictionaryCog(Cog):
             title=f'`{query}`의 검색 결과',
             description='로포나어 단어를 검색합니다.',
             color=get_const('ropona_color')
+        ), query)
+
+    @cog_ext.cog_slash(
+        description='라졔르베라어(라죤) 단어를 검색합니다.',
+        guild_ids=guild_ids,
+        options=[
+            create_option(
+                name='query',
+                description='검색할 단어',
+                required=True,
+                option_type=SlashCommandOptionType.STRING
+            )
+        ]
+    )
+    async def lazhon(self, ctx: SlashContext, query: str):
+        await handle_dictionary(ctx, databases['lazhon'], Embed(
+            title=f'`{query}`의 검색 결과',
+            description='라졔르베라어(라죤) 단어를 검색합니다.',
+            color=get_const('lazha_color')
         ), query)
 
     @cog_ext.cog_slash(
