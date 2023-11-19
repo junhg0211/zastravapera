@@ -5,7 +5,7 @@ class RoponaWord(Word):
     back_slice = 3
 
     def __init__(self, word: str, pronunciation_modern: str, pronunciation_middle: str, pronunciation_old: str,
-                 pronunciation_hyper: str, pos: str, meaning: str, accent: str, traditional: str, etymology: str):
+                 pronunciation_hyper: str, pos: str, meaning: str, accent: str, traditional: str):
         super().__init__(word)
         self.word = word
         self.pronunciation_modern = pronunciation_modern
@@ -16,7 +16,6 @@ class RoponaWord(Word):
         self.meaning = meaning
         self.accent = accent
         self.traditional = traditional
-        self.etymology = etymology
 
     def get_field_name(self, special: bool) -> str:
         if special:
@@ -38,10 +37,9 @@ class RoponaDatabase(PosDatabase):
         self.pronunciation_hyper_column = 4
         self.accent_column = 7
         self.traditional_column = 8
-        self.etymology_column = 9
 
     def row_appending(self, rows_list, row):
         rows_list.append(RoponaWord(
             row[self.word_column], row[self.pronunciation_modern_column], row[self.pronunciation_middle_column],
             row[self.pronunciation_old_column], row[self.pronunciation_hyper_column], row[self.pos_column],
-            row[self.meaning_column], row[self.accent_column], row[self.traditional_column], row[self.etymology_column]))
+            row[self.meaning_column], row[self.accent_column], row[self.traditional_column]))
