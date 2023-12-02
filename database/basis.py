@@ -47,7 +47,7 @@ class Database:
 
         print(f'Connecting to `{self.spreadsheet_key}` ...', end='\r')
 
-        time_sleep(1)
+        time_sleep(2)
         self.credential = gspread.service_account(filename='res/google_credentials.json')
         self.sheet = self.credential.open_by_key(get_const(spreadsheet_key)).get_worksheet(sheet_number)
 
