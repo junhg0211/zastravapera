@@ -14,9 +14,18 @@ class ScheskatteWord(Word):
         self.derived_from_language = derived_from_language
         self.derived_from_word = derived_from_word
 
-    def get_field_name(self, special: bool) -> str:
-        return (f'**{self.word}**' if not special else f'__**{self.word}** (일치)__') \
-               + (f' [{self.note}]' if self.note else '')
-
     def get_field_value(self) -> str:
-        return self.meaning
+        definitions = list()
+        if self.noun:
+            definitions.append(f'명: {self.noun}')
+        if self.adj:
+            definitions.append(f'형: {self.adj}')
+        if self.verb:
+            definitions.append(f'동: {self.verb}')
+        if self.adv:
+            definitions.append(f'부: {self.adv}')
+        if self.prep:
+            definitions.append(f'관: {self.prep}')
+        if self.remark:
+            definitions.append(f'비고: {self.remark}')
+        return '\n'.join(definitions)

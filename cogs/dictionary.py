@@ -15,6 +15,7 @@ from database.iremna import IremnaWord
 from database.lazhon import LazhonWord
 from database.mikhoros import MikhorosWord
 from database.ropona import RoponaDatabase
+from database.scheskatte import ScheskatteWord
 from database.sesame import SesameWord
 from database.slengeus import SlengeusWord
 from database.zasok import ZasokeseWord, BerquamWord
@@ -37,7 +38,7 @@ databases = {
     'pain': SimpleDatabase('liki_database'),
     'fsovm': Database(FsovmWord, 'fsovm_database'),
     'chrisancthian': PosDatabase('chrisancthian_database', 0, 0, 2, 1, 3),
-    'scheskatte': Database(ZasokeseWord, 'scheskatte_database', 1),
+    'scheskatte': Database(ScheskatteWord, 'scheskatte_database', 1),
     'ropona': RoponaDatabase("ropona_database"),
     'lazhon': Database(LazhonWord, 'lazhon_database', 0),
     'slengeus': Database(SlengeusWord, 'slengeus_database', 0)
