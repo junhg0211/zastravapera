@@ -2,13 +2,11 @@ from database import Word
 
 
 class SlengeusWord(Word):
-    back_slice = 3
+    back_slice = 4
 
-    def __init__(self, shape: str, code: str, word: str, noun='', verb='', adj='', adv='', note='', etymology='',
-                 *args):
+    def __init__(self, code: int, word: str, noun='', verb='', adj='', adv='', note='', etymology='', *_):
         super().__init__(word)
 
-        self.shape = shape
         self.code = code
         self.noun = noun
         self.verb = verb
