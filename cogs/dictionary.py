@@ -9,7 +9,6 @@ from const import get_const
 from database import Database, DialectDatabase, PosDatabase, SimpleDatabase
 from database.arteut import ArteutWord
 from database.enjie import EnjieDatabase
-from database.felinkia import FelinkiaWord
 from database.hemelvaarht import ThravelemehWord
 from database.iremna import IremnaWord
 from database.lazhon import LazhonWord
@@ -29,9 +28,7 @@ databases = {
     'thravelemeh': Database(ThravelemehWord, 'thravelemeh_database'),
     'berquam': Database(BerquamWord, 'zasokese_database', 1),
     'simetasispika': DialectDatabase(ZasokeseWord, 'zasokese_database', zasokese_to_simetasise),
-    'felinkia': Database(FelinkiaWord, 'felinkia_database'),
     '4351': Database(SesameWord, '4351_database', 0),
-    'semal': PosDatabase('semal_database'),
     'iremna': Database(IremnaWord, 'iremna_database', 0),
     'arteut': Database(ArteutWord, 'arteut_database', 0),
     'enjie': EnjieDatabase('enjie_database'),
@@ -234,25 +231,6 @@ class DictionaryCog(Cog):
         ), query)
 
     @cog_ext.cog_slash(
-        description='펠라인카이아어 단어를 검색합니다.',
-        guild_ids=guild_ids,
-        options=[
-            create_option(
-                name='query',
-                description='검색할 단어',
-                required=True,
-                option_type=3
-            )
-        ]
-    )
-    async def felinkia(self, ctx: SlashContext, query: str):
-        await handle_dictionary(ctx, databases['felinkia'], Embed(
-            title=f'`{query}`의 검색 결과',
-            description='펠라인카이아어 단어를 검색합니다.',
-            color=get_const('felinkia_color')
-        ), query)
-
-    @cog_ext.cog_slash(
         name='4351',
         description='4351 단어를 검색합니다.',
         guild_ids=guild_ids,
@@ -270,26 +248,6 @@ class DictionaryCog(Cog):
             title=f'`{query}`의 검색 결과',
             description='4351의 단어를 검색합니다.',
             color=get_const('4351_color')
-        ), query)
-
-    @cog_ext.cog_slash(
-        name='semal',
-        description='새말 단어를 검색합니다.',
-        guild_ids=guild_ids,
-        options=[
-            create_option(
-                name='query',
-                description='검색할 단어',
-                required=True,
-                option_type=3
-            )
-        ]
-    )
-    async def semal(self, ctx: SlashContext, query: str):
-        await handle_dictionary(ctx, databases['semal'], Embed(
-            title=f'`{query}`의 검색 결과',
-            description='새말 단어를 검색합니다.',
-            color=get_const('semal_color')
         ), query)
 
     @cog_ext.cog_slash(
