@@ -20,6 +20,7 @@ from database.sesame import SesameWord
 from database.slengeus import SlengeusWord
 from database.zasok import ZasokeseWord, BerquamWord
 from database.fsovm import FsovmWord
+from database.pasel import PaselWord
 from util import get_programwide
 from util.simetasis import zasokese_to_simetasise
 
@@ -41,7 +42,8 @@ databases = {
     'scheskatte': Database(ScheskatteWord, 'scheskatte_database', 1),
     'ropona': RoponaDatabase("ropona_database"),
     'lazhon': Database(LazhonWord, 'lazhon_database', 0),
-    'slengeus': Database(SlengeusWord, 'slengeus_database', 0)
+    'slengeus': Database(SlengeusWord, 'slengeus_database', 0),
+    'pasel': Database(PaselWord, 'pasel_database', 0)
 }
 
 guild_ids = get_programwide('guild_ids')
@@ -498,6 +500,25 @@ class DictionaryCog(Cog):
             title=f'`{query}`의 검색 결과',
             description='규조어 단어를 검색합니다.',
             color=get_const('slengeus_color')
+        ), query)
+
+    @cog_ext.cog_slash(
+        description='파셀어 단어를 검색합니다.',
+        guild_ids=guild_ids,
+        options=[
+            create_option(
+                name='query',
+                description='검색할 단어',
+                required=True,
+                option_type=SlashCommandOptionType.STRING
+            )
+        ]
+    )
+    async def pasel(self, ctx: SlashContext, query: str):
+        await handle_dictionary(ctx, databases['pasel'], Embed(
+            title=f'`{query}`의 검색 결과',
+            description='파셀어 단어를 검색합니다.',
+            color=get_const('pasel_color')
         ), query)
 
     @cog_ext.cog_slash(
